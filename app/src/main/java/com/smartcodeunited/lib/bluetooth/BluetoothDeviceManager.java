@@ -16,9 +16,7 @@
 package com.smartcodeunited.lib.bluetooth;
 
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothProfile;
 
 public final class BluetoothDeviceManager
 {
