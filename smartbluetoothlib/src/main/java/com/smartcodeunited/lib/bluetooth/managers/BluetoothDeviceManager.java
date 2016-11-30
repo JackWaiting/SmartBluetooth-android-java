@@ -235,12 +235,12 @@ public final class BluetoothDeviceManager
 
     public void turnOn()
     {
-
+        sBluetoothAdapter.enable();
     }
 
     public void turnOff()
     {
-
+        sBluetoothAdapter.disable();
     }
 
     public void connect(BluetoothDevice bluetoothDevice, BluetoothDeviceProfile bluetoothDeviceProfile)
