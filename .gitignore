@@ -10,8 +10,6 @@
 *.apk
 *.ap_
 
-/grale
-build.gradle
 # Files for the ART/Dalvik VM
 *.dex
 
