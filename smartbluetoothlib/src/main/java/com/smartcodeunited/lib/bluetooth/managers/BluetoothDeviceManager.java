@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.smartcodeunited.lib.bluetooth;
+package com.smartcodeunited.lib.bluetooth.managers;
 
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
+import android.os.Handler;
 
 public final class BluetoothDeviceManager
 {
-    private static final BluetoothDeviceManager sBluetoothDeviceManager = new BluetoothDeviceManager();
+    private static  BluetoothDeviceManager sBluetoothDeviceManager = new BluetoothDeviceManager();
     private static OnBluetoothDeviceBluetoothStatusListener sOnBluetoothDeviceBluetoothStatusListener;
 
+    private static Context sContext;
     /**
      * @reference https://en.wikipedia.org/wiki/List_of_Bluetooth_profiles
      */
@@ -109,10 +113,26 @@ public final class BluetoothDeviceManager
     }
 
     private BluetoothDeviceManager()
-    {}
-
-    public static BluetoothDeviceManager getInstance()
     {
+
+
+    }
+
+    public static BluetoothDeviceManager getInstance(Context context)
+
+    {
+        if (context != null) {
+            sContext = context.getApplicationContext();
+
+            if (sBluetoothDeviceManager != null) {
+                sBluetoothDeviceManager = new BluetoothDeviceManager();
+            }
+        } else {
+
+            throw new RuntimeException("The context is null!");
+        }
+
+
         return sBluetoothDeviceManager;
     }
 
@@ -131,13 +151,22 @@ public final class BluetoothDeviceManager
 
     }
 
+    private static BluetoothAdapter sBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+    /**
+     * 是否支持蓝牙
+     * @return
+     */
     public boolean isSupported()
     {
-        return false;
+        return sBluetoothAdapter!=null;
     }
 
     public boolean isEnabled()
     {
+        if (sBluetoothAdapter != null) {
+            return sBluetoothAdapter.isEnabled();
+        }
         return false;
     }
 
@@ -155,35 +184,63 @@ public final class BluetoothDeviceManager
     {
         return false;
     }
-
+    private boolean mScanning;
+    private Handler mHandler=new Handler();
+    // Stops scanning after 10 seconds.
+    private static final long SCAN_PERIOD = 10000;
     /**
      * Note: You can only scan for Bluetooth LE devices or scan for Classic Bluetooth devices, as described in Bluetooth. You cannot scan for both Bluetooth LE and classic devices at the same time.
      *
      * @param bluetoothType
      */
-    public void startScanning(BluetoothType bluetoothType)
+    public void startScanning(int bluetoothType)
     {
 
+        switch (bluetoothType){
+            case BluetoothType.CLASSIC:
+                break;
+            case BluetoothType.BLE:
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mScanning = false;
+                        sBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    }
+                }, SCAN_PERIOD);
+
+                mScanning = true;
+                sBluetoothAdapter.startLeScan(mLeScanCallback);
+                break;
+
+        }
     }
+    private  BluetoothAdapter.LeScanCallback mLeScanCallback=new BluetoothAdapter.LeScanCallback() {
+        @Override
+        public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
+
+        }
+    };
 
     /**
      * Note: You can only scan for Bluetooth LE devices or scan for Classic Bluetooth devices, as described in Bluetooth. You cannot scan for both Bluetooth LE and classic devices at the same time.
      *
      * @param bluetoothType
      */
-    public void stopScanning(BluetoothType bluetoothType)
+    public void stopScanning(int bluetoothType)
     {
+        if (mScanning)
+        sBluetoothAdapter.stopLeScan(mLeScanCallback);
 
     }
 
     public void turnOn()
     {
-
+        sBluetoothAdapter.enable();
     }
 
     public void turnOff()
     {
-
+        sBluetoothAdapter.disable();
     }
 
     public void connect(BluetoothDevice bluetoothDevice, BluetoothDeviceProfile bluetoothDeviceProfile)
