@@ -27,8 +27,9 @@ public class BLEDeviceManager {
 
     // / send data
     private static BluetoothGattCharacteristic writeCharacteristic; // / write
-    // Characteristic
+    // Characteristic；测试值，可修改。
     private static String uuidQppService = "0000fee9-0000-1000-8000-00805f9b34fb";
+    // Characteristic；测试值，可修改。
     private static String uuidQppCharWrite = "d44bc439-abfd-45a2-b575-925416129600";
     public static final int qppServerBufferSize = 20;
     // / receive data
@@ -297,19 +298,48 @@ public class BLEDeviceManager {
     }
 
 
-    private  void parse(byte[] commands) {
-        // 切取命令：去掉 头+尾+长度位+设备识别位
-        int length = commands.length - 2 - 1 - 1;
-        final byte[] subCommand = new byte[length];
-
-        for (int i = 0; i < length; i++) {
-            subCommand[i] = commands[3 + i];
+    private  boolean sendData(BluetoothGatt bluetoothGatt,
+                                       String qppData) {
+        boolean ret = false;
+        if (bluetoothGatt == null) {
+            Log.e(TAG, "BluetoothAdapter not initialized !");
+            return false;
         }
+
+        if (qppData == null) {
+            Log.e(TAG, "qppData = null !");
+            return false;
+        }
+        writeCharacteristic.setValue(qppData);
+        return bluetoothGatt.writeCharacteristic(writeCharacteristic);
+    }
+
+
+    private  boolean sendData(BluetoothGatt bluetoothGatt,   byte[] bytes) {
+        boolean ret = false;
+        if (bluetoothGatt == null) {
+            Log.e(TAG, "BluetoothAdapter not initialized !");
+            return false;
+        }
+
+        if (bytes == null) {
+            Log.e(TAG, "qppData = null !");
+            return false;
+        }
+        writeCharacteristic.setValue(bytes);
+        return bluetoothGatt.writeCharacteristic(writeCharacteristic);
+    }
+
+    /**
+     * parse the receive command
+     * @param commands
+     */
+    private  void parse(final byte[] commands) {
         handler.post(new Runnable() {
 
             @Override
             public void run() {
-                switch (subCommand[0]) {
+                switch (commands[0]) {
                     case CommandProtocol.Type.FEEDBACK_INQUIRY: {
                     }
                     break;
@@ -325,11 +355,12 @@ public class BLEDeviceManager {
         }
     }
 
-    public void disconnect() {
+    public void disConnectBLEDevice() {
         if (mBluetoothGatt == null) {
             Log.w("Qn Dbg", "BluetoothAdapter not initialized");
             return;
         }
         mBluetoothGatt.disconnect();
+        mBluetoothGatt=null;
     }
 }

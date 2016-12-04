@@ -16,11 +16,7 @@ public class CommandManager {
      */
     public static boolean isCommandValid(byte[] command)
     {
-        if ((command != null)
-                && (command.length >= CommandProtocol.COMMAND_LENGTH_MINIMUM)
-                && (command[0] == CommandProtocol.COMMAND_HEADER)
-                && (command[command.length - 1] == CommandProtocol.COMMAND_TAIL)
-                && (command[1] == command.length))
+        if ((command != null)&&(command[1] == command.length))
         {
             return true;
         }

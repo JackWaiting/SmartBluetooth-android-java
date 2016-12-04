@@ -246,11 +246,12 @@ public final class BluetoothDeviceManager
     public void connect(BluetoothDevice bluetoothDevice, BluetoothDeviceProfile bluetoothDeviceProfile)
     {
 
-
+        BLEDeviceManager.getInstance().connectBLEDevice(sContext,bluetoothDevice);
     }
 
     public void disconnect(BluetoothDevice bluetoothDevice, BluetoothDeviceProfile bluetoothDeviceProfile)
     {
+        BLEDeviceManager.getInstance().disConnectBLEDevice();
 
     }
 
