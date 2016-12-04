@@ -246,6 +246,7 @@ public final class BluetoothDeviceManager
     public void connect(BluetoothDevice bluetoothDevice, BluetoothDeviceProfile bluetoothDeviceProfile)
     {
 
+
     }
 
     public void disconnect(BluetoothDevice bluetoothDevice, BluetoothDeviceProfile bluetoothDeviceProfile)
