@@ -23,6 +23,15 @@ public class CommandManager {
 
         return false;
     }
+
+    /**
+     * 发命令通信的例子
+     * @param deviceType
+     * @param commandType
+     * @param subCommandType
+     * @param otherCommand
+     * @return
+     */
     public static byte[] build(int deviceType, int commandType,
                                int subCommandType,int... otherCommand)
     {
@@ -34,10 +43,10 @@ public class CommandManager {
         byte[] command = new byte[length];
 
         // 自定义命令头部。
-        command[0] = CommandProtocol.COMMAND_HEADER;
+        command[0] = 1;
         // 自定义命令长度。
         command[1] = (byte) length;
-        // 自定义命令设备类型：灯、音箱、车载MP3等。
+        // 自定义命令设备类型如：灯、音箱、车载MP3等。
         command[2] = (byte) deviceType;
         // 自定义命令类型：校验、查询、控制、反馈。
         command[3] = (byte) commandType;
@@ -52,7 +61,7 @@ public class CommandManager {
             }
         }
 
-        command[length - 1] = CommandProtocol.COMMAND_TAIL;
+        command[length - 1] = 2;
 
         return command;
     }
