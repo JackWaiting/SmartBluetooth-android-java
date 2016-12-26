@@ -1,4 +1,4 @@
-package com.smartcodeunited.demo.bluetooth.activities;
+package com.smartcodeunited.lib.bluetooth.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
