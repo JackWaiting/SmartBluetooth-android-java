@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.smartcodeunited.lib.bluetooth.commands.CommandManager;
-import com.smartcodeunited.lib.bluetooth.commands.CommandProtocol;
 import com.smartcodeunited.lib.bluetooth.tools.LogManager;
 
 import java.util.ArrayList;
@@ -353,9 +352,9 @@ public class BLEDeviceManager {
             @Override
             public void run() {
                 switch (commands[0]) {
-                    case CommandProtocol.Type.FEEDBACK_INQUIRY: {
+                    /*case CommandProtocol.Type.FEEDBACK_INQUIRY: {
                     }
-                    break;
+                    break;*/
                 }
             }
         });
