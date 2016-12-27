@@ -163,6 +163,9 @@ public final class BluetoothDeviceManager
      */
     public void startScanning(BluetoothType bluetoothType)
     {
+        if(bluetoothType != null){
+            sBluetoothDeviceManager.startScanning(bluetoothType);
+        }
 
     }
 
