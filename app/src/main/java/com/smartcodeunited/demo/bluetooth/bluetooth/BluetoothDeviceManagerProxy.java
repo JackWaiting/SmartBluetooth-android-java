@@ -30,27 +30,27 @@ public class BluetoothDeviceManagerProxy {
 
     private boolean modifieds = false;
     private Context context;
-    private static int currentDeviceMode;  //当前连接模式
+    private static int currentDeviceMode;  //The current connection mode
     private boolean bluzManReady = false;
 
     /**
-     * 蓝牙库控制类
+     * Bluetooth control class library
      */
     public static BluetoothDeviceManagerProxy proxy;
     /**
-     * 是否已连接
+     * Whether the connected
      */
     private boolean connected;
     /**
-     * 蓝牙设备管理类
+     * Bluetooth device management class
      */
     private static BluetoothDeviceManager bluzDeviceMan;
     /**
-     * 已连接的蓝牙设备
+     * The connected bluetooth devices
      */
     private BluetoothDevice connectedDevice;
     /**
-     * 获取蓝牙管理类
+     * Get the bluetooth management class
      *
      * @return
      */
@@ -80,7 +80,7 @@ public class BluetoothDeviceManagerProxy {
     }
 
     /**
-     * 获取已存在的实例对象，如果不存在则返回null
+     * For instance objects already in existence, if there is no it returns null
      *
      * @return
      */
@@ -89,9 +89,9 @@ public class BluetoothDeviceManagerProxy {
     }
 
     /**
-     * 扫描蓝牙设备
+     * Scan bluetooth devices
      *
-     * @param listener 监听
+     * @param listener listener
      */
     public void startScanning(BluetoothDeviceManager.OnBluetoothDeviceBluetoothScanningListener listener) {
         Log.i("startDiscoverys", "startDiscoverys");
