@@ -243,7 +243,7 @@ public final class BluetoothDeviceManager
         sBluetoothAdapter.disable();
     }
 
-    public void connect(BluetoothDevice bluetoothDevice, BluetoothDeviceProfile bluetoothDeviceProfile)
+    public void connect(BluetoothDevice bluetoothDevice)
     {
 
         BLEDeviceManager.getInstance().connectBLEDevice(sContext,bluetoothDevice);
