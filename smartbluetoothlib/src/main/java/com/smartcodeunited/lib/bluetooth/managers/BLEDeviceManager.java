@@ -353,7 +353,7 @@ public class BLEDeviceManager {
             @Override
             public void run() {
                 switch (commands[0]) {
-                    case CommandProtocol.Type.FEEDBACK_INQUIRY: {
+                    case CommandProtocol.Type.FEEDBACK_CONTROL: {
                     }
                     break;
                 }
