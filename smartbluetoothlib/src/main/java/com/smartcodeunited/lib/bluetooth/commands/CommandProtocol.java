@@ -4,7 +4,7 @@ public class CommandProtocol {
 
 	/**
 	 * <p>
-	 * 自定义命令的最小长度。
+	 * Minimum length。
 	 * </p>
 	 * 
 	 * @since 1.0.0
@@ -14,7 +14,7 @@ public class CommandProtocol {
 
 	/**
 	 * <p>
-	 * 命令类型：大类型分四类：校验、查询、控制、反馈。
+	 * Command type: verification, inquery, control, feedback.
 	 * </p>
 	 * 
 	 * @since 1.0.0
@@ -23,55 +23,40 @@ public class CommandProtocol {
 	{
 		/**
 		 * <p>
-		 * 校验。
+		 * verification
 		 * </p>
 		 * 
 		 * @since 1.0.0
 		 */
-		public static final int VERIFICATION = 1;
+		public static final int VERIFICATION = 0x01;
 
 		/**
 		 * <p>
-		 * 查询。
+		 * inquery
 		 * </p>
 		 * 
 		 * @since 1.0.0
 		 */
-		public static final int INQUIRY = 2;
-		/**
-		 * <p>
-		 * 查询反馈
-		 * </p>
-		 * 
-		 * @since 1.0.0
-		 */
-		public static final int FEEDBACK_INQUIRY = 2;
+		public static final int INQUIRY = 0x02;
 
 		/**
 		 * <p>
-		 * 控制。
+		 * control
 		 * </p>
 		 * 
 		 * @since 1.0.0
 		 */
-		public static final int CONTROL = 3;
+		public static final int CONTROL = 0x03;
 
 		/**
 		 * <p>
-		 * 控制反馈。
+		 * feedback
 		 * </p>
 		 * 
 		 * @since 1.0.0
 		 */
-		public static final int FEEDBACK_CONTROL = 4;
+		public static final int FEEDBACK_CONTROL = 0x04;
 
 	}
 
-	/**
-	 *功能位
-	 */
-	public static final class Function
-	{
-
-	}
 }
