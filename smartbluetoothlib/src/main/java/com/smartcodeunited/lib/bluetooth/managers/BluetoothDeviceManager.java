@@ -154,7 +154,7 @@ public final class BluetoothDeviceManager
     private static BluetoothAdapter sBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
     /**
-     * 是否支持蓝牙
+     * Whether to support Bluetooth
      * @return
      */
     public boolean isSupported()

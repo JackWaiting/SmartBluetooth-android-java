@@ -27,9 +27,9 @@ public class BLEDeviceManager {
 
     // / send data
     private static BluetoothGattCharacteristic writeCharacteristic; // / write
-    // Characteristic；测试值，可修改。
+    // Characteristic；uuid for test.
     private static String uuidQppService = "0000fee9-0000-1000-8000-00805f9b34fb";
-    // Characteristic；测试值，可修改。
+    // Characteristic；uuid for test.
     private static String uuidQppCharWrite = "d44bc439-abfd-45a2-b575-925416129600";
     public static final int qppServerBufferSize = 20;
     // / receive data
@@ -46,7 +46,7 @@ public class BLEDeviceManager {
     public interface OnConnectionListener {
         /**
          * @param mBluetoothGatt
-         * @param state          1为连接，2为未连接
+         * @param state   connected:1,disconnected:2.
          */
         public void onConnectionStateChanged(BluetoothGatt mBluetoothGatt, int state);
     }
@@ -95,7 +95,7 @@ public class BLEDeviceManager {
     public static boolean isServicesDiscovered;
 
     /**
-     * 连接状态监听
+     * Connection status Listener
      *
      * @param onConnectionListener
      */
@@ -112,6 +112,10 @@ public class BLEDeviceManager {
         Log.i("tag", "connect " + mDevice.getName());
     }
 
+    /**
+     * Implements callback methods for GATT events that the app cares about.  For example,
+     connection change and services discovered.
+     */
     private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -127,19 +131,15 @@ public class BLEDeviceManager {
             sOnConnectionListener.onConnectionStateChanged(gatt, newState);
         }
 
-        /**
-         * 设备服务的回调
-         * @param gatt
-         * @param status
-         */
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
+
             isServicesDiscovered = setEnable(gatt, uuidQppService, uuidQppCharWrite);
         }
 
         /**
-         * 写入设备的回调
+         * Write callback
          * @param gatt
          * @param characteristic
          * @param status
@@ -153,7 +153,7 @@ public class BLEDeviceManager {
         }
 
         /**
-         * 发送特征值到设备后，设备反馈应用端
+         * After the feature value is sent to the device, the device feedback application
          * @param gatt
          * @param characteristic
          */
@@ -172,14 +172,14 @@ public class BLEDeviceManager {
 
 
     /**
-     * 初始化一些必须的UUID
+     * Initialize some of the necessary UUID
      *
      * @param bluetoothGatt
-     * @param qppServiceUUID 可修改的ServiceUUID
-     * @param writeCharUUID  可修改的writeCharUUID
-     *                       可混淆，后续修改
+     * @param qppServiceUUID Modified of ServiceUUID
+     * @param writeCharUUID  Modified of writeCharUUID
      * @return
      */
+    //TODO Can be confused
     private   boolean setEnable(BluetoothGatt bluetoothGatt,
                                     String qppServiceUUID, String writeCharUUID) {
         resetQppField();
@@ -197,6 +197,7 @@ public class BLEDeviceManager {
             Log.e(TAG, "Qpp service not found");
             return false;
         }
+        //
         List<BluetoothGattCharacteristic> gattCharacteristics = qppService
                 .getCharacteristics();
         for (int j = 0; j < gattCharacteristics.size(); j++) {
@@ -269,7 +270,7 @@ public class BLEDeviceManager {
 
 
     /**
-     * 接收设备端数据
+     * Receiving device data
      *
      * @param bluetoothGatt
      * @param characteristic
@@ -298,6 +299,12 @@ public class BLEDeviceManager {
     }
 
 
+    /**
+     * send data to device
+     * @param bluetoothGatt
+     * @param qppData
+     * @return
+     */
     private  boolean sendData(BluetoothGatt bluetoothGatt,
                                        String qppData) {
         boolean ret = false;
@@ -315,6 +322,12 @@ public class BLEDeviceManager {
     }
 
 
+    /**
+     * send data to device
+     * @param bluetoothGatt
+     * @param bytes
+     * @return
+     */
     private  boolean sendData(BluetoothGatt bluetoothGatt,   byte[] bytes) {
         boolean ret = false;
         if (bluetoothGatt == null) {
@@ -340,7 +353,7 @@ public class BLEDeviceManager {
             @Override
             public void run() {
                 switch (commands[0]) {
-                    case CommandProtocol.Type.FEEDBACK_INQUIRY: {
+                    case CommandProtocol.Type.FEEDBACK_CONTROL: {
                     }
                     break;
                 }
