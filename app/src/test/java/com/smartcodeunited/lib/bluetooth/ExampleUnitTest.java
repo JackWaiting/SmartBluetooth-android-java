@@ -1,4 +1,4 @@
-package com.smartcodeunited.demo.bluetooth;
+package com.smartcodeunited.lib.bluetooth;
 
 import org.junit.Test;
 
