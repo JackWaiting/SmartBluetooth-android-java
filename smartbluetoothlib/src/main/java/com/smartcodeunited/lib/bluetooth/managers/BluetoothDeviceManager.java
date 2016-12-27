@@ -19,6 +19,7 @@ package com.smartcodeunited.lib.bluetooth.managers;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.os.Handler;
 
 import com.smartcodeunited.lib.bluetooth.commands.CommandProtocol;
 
