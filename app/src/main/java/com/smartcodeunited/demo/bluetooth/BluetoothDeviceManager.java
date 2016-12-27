@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.smartcodeunited.lib.bluetooth;
+package com.smartcodeunited.demo.bluetooth;
 
 
 import android.bluetooth.BluetoothDevice;
