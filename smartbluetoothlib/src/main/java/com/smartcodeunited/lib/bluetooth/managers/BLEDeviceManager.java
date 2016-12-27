@@ -102,6 +102,15 @@ public class BLEDeviceManager {
 
     public static boolean isServicesDiscovered;
 
+    public interface OnRecievedDataListener{
+        public void onRecivedData(byte[] data);
+    }
+    private  static OnRecievedDataListener sOnRecievedDataListener;
+    public void setOnRecievedDataListener(OnRecievedDataListener onRecievedDataListener){
+        sOnRecievedDataListener=onRecievedDataListener;
+    }
+
+
     public interface OnConnectionBLEListener {
         /**
          * @param mBluetoothGatt
@@ -389,8 +398,12 @@ public class BLEDeviceManager {
 
             @Override
             public void run() {
+                if (sOnRecievedDataListener!=null){
+                    sOnRecievedDataListener.onRecivedData(commands);
+                }
                 switch (commands[0]) {
                     case CommandProtocol.Type.FEEDBACK_CONTROL: {
+
                     }
                     break;
                 }
@@ -418,6 +431,7 @@ public class BLEDeviceManager {
     private boolean mScanning;
     private Handler mHandler = new Handler();
     // Stops scanning after 10 seconds.
+
 
     public void scanBLE() {
         mHandler.postDelayed(new Runnable() {
@@ -448,5 +462,12 @@ public class BLEDeviceManager {
         }
     };
 
+    /**
+     * send commands to device for test
+     * @param testByte
+     */
+    public void sendDebugData(byte[] testByte) {
+        sendData(mBluetoothGatt,testByte);
+    }
 
 }

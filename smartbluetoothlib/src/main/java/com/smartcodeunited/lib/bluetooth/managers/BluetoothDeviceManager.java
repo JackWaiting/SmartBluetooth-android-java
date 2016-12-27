@@ -159,6 +159,10 @@ public final class BluetoothDeviceManager
     }
 
 
+    /**
+     *
+     * @param onConnectionListener
+     */
     public void setOnBluetoothDeviceBluetoothStatusListener(BLEDeviceManager.OnConnectionBLEListener onConnectionListener)
     {
 
@@ -168,6 +172,9 @@ public final class BluetoothDeviceManager
     public void setOnBluetoothDeviceBluetoothScanningListener(BLEDeviceManager.OnDiscoveryBLEListener onDiscoveryBLEListener)
     {
         BLEDeviceManager.getInstance().setOnDiscoveryBLEListener(onDiscoveryBLEListener);
+    }
+    public void setOnBluetoothDeviceDataRecieved(BLEDeviceManager.OnRecievedDataListener onBluetoothDeviceDataRecieved){
+        BLEDeviceManager.getInstance().setOnRecievedDataListener(onBluetoothDeviceDataRecieved);
     }
 
 
@@ -232,9 +239,8 @@ public final class BluetoothDeviceManager
     /**
      * Note: You can only scan for Bluetooth LE devices or scan for Classic Bluetooth devices, as described in Bluetooth. You cannot scan for both Bluetooth LE and classic devices at the same time.
      *
-     * @param bluetoothType
      */
-    public void stopScan(int bluetoothType)
+    public void stopScan()
     {
         BLEDeviceManager.getInstance().stopScan();
 
@@ -262,4 +268,7 @@ public final class BluetoothDeviceManager
 
     }
 
+    public void sendDebugData(byte[] debugData){
+        BLEDeviceManager.getInstance().sendDebugData(debugData);
+    }
 }
