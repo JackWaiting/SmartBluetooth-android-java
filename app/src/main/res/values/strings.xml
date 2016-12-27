@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">SmartBluetooth</string>
+    <string name="scanning">扫描设备</string>
+    <string name="stop">停止扫描</string>
+    <string name="disconnected">断开蓝牙</string>
 </resources>
