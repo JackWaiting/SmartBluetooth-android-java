@@ -260,8 +260,15 @@ public final class BluetoothDeviceManager
 
     public void connect(BluetoothDevice bluetoothDevice)
     {
+        switch (deviceType){
+            case BluetoothType.CLASSIC:
+                break;
+            case  BluetoothType.BLE:
 
-        BLEDeviceManager.getInstance().connectBLEDevice(sContext,bluetoothDevice);
+                BLEDeviceManager.getInstance().connectBLEDevice(sContext,bluetoothDevice);
+                break;
+        }
+
     }
 
     public void disconnect(BluetoothDevice bluetoothDevice)
