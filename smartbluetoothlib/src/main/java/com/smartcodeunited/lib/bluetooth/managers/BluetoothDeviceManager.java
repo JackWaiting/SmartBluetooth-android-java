@@ -217,6 +217,10 @@ public final class BluetoothDeviceManager
     {
         return false;
     }
+    private boolean mScanning;
+    private Handler mHandler=new Handler();
+    // Stops scanning after 10 seconds.
+    private static final long SCAN_PERIOD = 10000;
 
     /**
      * Note: You can only scan for Bluetooth LE devices or scan for Classic Bluetooth devices, as described in Bluetooth. You cannot scan for both Bluetooth LE and classic devices at the same time.
@@ -232,10 +236,8 @@ public final class BluetoothDeviceManager
 
                 BLEDeviceManager.getInstance().scanBLE();
                 break;
-
         }
     }
-
     /**
      * Note: You can only scan for Bluetooth LE devices or scan for Classic Bluetooth devices, as described in Bluetooth. You cannot scan for both Bluetooth LE and classic devices at the same time.
      *
@@ -243,7 +245,6 @@ public final class BluetoothDeviceManager
     public void stopScan()
     {
         BLEDeviceManager.getInstance().stopScan();
-
     }
 
     public void turnOn()
@@ -265,7 +266,6 @@ public final class BluetoothDeviceManager
     public void disconnect(BluetoothDevice bluetoothDevice)
     {
         BLEDeviceManager.getInstance().disConnectBLEDevice();
-
     }
 
     public void sendDebugData(byte[] debugData){
