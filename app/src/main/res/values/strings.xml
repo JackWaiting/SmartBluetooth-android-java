@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">SmartBluetooth</string>
+    <string name="scanning">Scanning</string>
+    <string name="start_scan">Start scan</string>
+    <string name="stop_scan">Stop scan</string>
+    <string name="disconnected">Disconnect</string>
 </resources>

@@ -1,10 +1,31 @@
+/*
+ * Copyright (C) 2016 SmartCodeUnited http://www.smartcodeunited.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.smartcodeunited.lib.bluetooth.commands;
 
 public class CommandProtocol {
 
 	/**
 	 * <p>
-	 * 自定义命令的最小长度。
+	 * Bluetooth scan timeout
+	 * </p>
+	 */
+	public static  int SCAN_TIMEOUT = 10*1000;
+	/**
+	 * <p>
+	 * Minimum length。
 	 * </p>
 	 * 
 	 * @since 1.0.0
@@ -14,7 +35,7 @@ public class CommandProtocol {
 
 	/**
 	 * <p>
-	 * 命令类型：大类型分四类：校验、查询、控制、反馈。
+	 * Command type: verification, inquery, control, feedback.
 	 * </p>
 	 * 
 	 * @since 1.0.0
@@ -23,55 +44,40 @@ public class CommandProtocol {
 	{
 		/**
 		 * <p>
-		 * 校验。
+		 * verification
 		 * </p>
 		 * 
 		 * @since 1.0.0
 		 */
-		public static final int VERIFICATION = 1;
+		public static final int VERIFICATION = 0x01;
 
 		/**
 		 * <p>
-		 * 查询。
+		 * inquery
 		 * </p>
 		 * 
 		 * @since 1.0.0
 		 */
-		public static final int INQUIRY = 2;
-		/**
-		 * <p>
-		 * 查询反馈
-		 * </p>
-		 * 
-		 * @since 1.0.0
-		 */
-		public static final int FEEDBACK_INQUIRY = 2;
+		public static final int INQUIRY = 0x02;
 
 		/**
 		 * <p>
-		 * 控制。
+		 * control
 		 * </p>
 		 * 
 		 * @since 1.0.0
 		 */
-		public static final int CONTROL = 3;
+		public static final int CONTROL = 0x03;
 
 		/**
 		 * <p>
-		 * 控制反馈。
+		 * feedback
 		 * </p>
 		 * 
 		 * @since 1.0.0
 		 */
-		public static final int FEEDBACK_CONTROL = 4;
+		public static final int FEEDBACK_CONTROL = 0x04;
 
 	}
 
-	/**
-	 *功能位
-	 */
-	public static final class Function
-	{
-
-	}
 }

@@ -21,10 +21,11 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Handler;
 
+import com.smartcodeunited.lib.bluetooth.commands.CommandProtocol;
+
 public final class BluetoothDeviceManager
 {
     private static  BluetoothDeviceManager sBluetoothDeviceManager = new BluetoothDeviceManager();
-    private static OnBluetoothDeviceBluetoothStatusListener sOnBluetoothDeviceBluetoothStatusListener;
 
     private static Context sContext;
     /**
@@ -94,23 +95,29 @@ public final class BluetoothDeviceManager
         public static final int DISCONNECTING = 3;
         public static final int DISCONNECTED = 4;
     }
+    private  int deviceType=0;
 
-    public interface OnBluetoothDeviceBluetoothStatusListener
-    {
-        public void onBluetoothDeviceBluetoothStatusChanged(int bluetoothStatus);
+    private int getDeviceType() {
+        return deviceType;
     }
 
-    public interface OnBluetoothDeviceBluetoothScanningListener
-    {
-        public void onBluetoothDeviceBluetoothScanningClassicReceived(BluetoothDevice bluetoothDevice);
-
-        public void onBluetoothDeviceBluetoothScanningBLEReceived(BluetoothDevice bluetoothDevice, int rssi, byte[] scanRecord);
+    /**
+     * set the Bluetooth connect type
+     * @param deviceType
+     */
+    public void setDeviceType(int deviceType) {
+        this.deviceType = deviceType;
     }
 
-    public interface OnBluetoothDeviceBluetoothConnectionStatusListener
-    {
-        public void onBluetoothDeviceBluetoothConnectionStatusChanged(BluetoothDeviceConnectionStatus bluetoothDeviceConnectionStatus, BluetoothDevice bluetoothDevice, BluetoothDeviceProfile bluetoothDeviceProfile);
+    /**
+     * set the Bluetooth scan timeout
+     * @param scanTimeOut
+     */
+    public void setSCanTimeOut(int scanTimeOut){
+        if (scanTimeOut>=5*1000&&scanTimeOut<=20*1000)
+        CommandProtocol.SCAN_TIMEOUT=scanTimeOut;
     }
+
 
     private BluetoothDeviceManager()
     {
@@ -136,25 +143,52 @@ public final class BluetoothDeviceManager
         return sBluetoothDeviceManager;
     }
 
-    public void setOnBluetoothDeviceBluetoothStatusListener(OnBluetoothDeviceBluetoothStatusListener onBluetoothDeviceBluetoothStatusListener)
-    {
-        sOnBluetoothDeviceBluetoothStatusListener = onBluetoothDeviceBluetoothStatusListener;
+    public BluetoothDeviceManager build(){
+        if (deviceType==0) {
+            throw new RuntimeException(
+                    "When you try to initialize BluetoothDeviceManager, you should call the method setDeviceType(int... deviceType) after the method getIntance(Context context) and before the method build() !");
+        }
+        switch (getDeviceType()){
+            case BluetoothType.BLE:
+//                if (sBLEDeviceManager==null)
+//                sBLEDeviceManager=BLEDeviceManager.getInstance();
+                break;
+        }
+
+
+        return  sBluetoothDeviceManager;
     }
 
-    public void setOnBluetoothDeviceBluetoothScanningListener(OnBluetoothDeviceBluetoothScanningListener onBluetoothDeviceBluetoothScanningListener)
+
+    /**
+     *
+     * @param onConnectionListener
+     */
+    public void setOnBluetoothDeviceBluetoothStatusListener(BLEDeviceManager.OnConnectionBLEListener onConnectionListener)
     {
 
+        BLEDeviceManager.getInstance().setOnConnectionListener(onConnectionListener);
     }
 
-    public void setOnBluetoothDeviceBluetoothConnectionStatusListener(OnBluetoothDeviceBluetoothConnectionStatusListener onBluetoothDeviceBluetoothConnectionStatusListener)
+    public void setOnBluetoothDeviceBluetoothScanningListener(BLEDeviceManager.OnDiscoveryBLEListener onDiscoveryBLEListener)
     {
-
+        BLEDeviceManager.getInstance().setOnDiscoveryBLEListener(onDiscoveryBLEListener);
     }
+    public void setOnBluetoothDeviceDataRecieved(BLEDeviceManager.OnRecievedDataListener onBluetoothDeviceDataRecieved){
+        BLEDeviceManager.getInstance().setOnRecievedDataListener(onBluetoothDeviceDataRecieved);
+    }
+
 
     private static BluetoothAdapter sBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+    public static BluetoothAdapter getBluetoothAdapter(){
+        if(sBluetoothAdapter==null){
+            sBluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
+        }
+        return  sBluetoothAdapter;
+    }
     /**
-     * 是否支持蓝牙
+     * Whether to support Bluetooth
      * @return
      */
     public boolean isSupported()
@@ -175,6 +209,11 @@ public final class BluetoothDeviceManager
         return false;
     }
 
+    public boolean isScanning()
+    {
+        return false;
+    }
+
     public boolean isScanning(BluetoothType bluetoothType)
     {
         return false;
@@ -188,49 +227,28 @@ public final class BluetoothDeviceManager
     private Handler mHandler=new Handler();
     // Stops scanning after 10 seconds.
     private static final long SCAN_PERIOD = 10000;
+
     /**
      * Note: You can only scan for Bluetooth LE devices or scan for Classic Bluetooth devices, as described in Bluetooth. You cannot scan for both Bluetooth LE and classic devices at the same time.
      *
-     * @param bluetoothType
      */
-    public void startScanning(int bluetoothType)
+    public void startScan()
     {
-
-        switch (bluetoothType){
+        switch (getDeviceType()){
             case BluetoothType.CLASSIC:
                 break;
             case BluetoothType.BLE:
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mScanning = false;
-                        sBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    }
-                }, SCAN_PERIOD);
-
-                mScanning = true;
-                sBluetoothAdapter.startLeScan(mLeScanCallback);
+                BLEDeviceManager.getInstance().scanBLE();
                 break;
-
         }
     }
-    private  BluetoothAdapter.LeScanCallback mLeScanCallback=new BluetoothAdapter.LeScanCallback() {
-        @Override
-        public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-
-        }
-    };
-
     /**
      * Note: You can only scan for Bluetooth LE devices or scan for Classic Bluetooth devices, as described in Bluetooth. You cannot scan for both Bluetooth LE and classic devices at the same time.
      *
-     * @param bluetoothType
      */
-    public void stopScanning(int bluetoothType)
+    public void stopScan()
     {
-        if (mScanning)
-        sBluetoothAdapter.stopLeScan(mLeScanCallback);
-
+        BLEDeviceManager.getInstance().stopScan();
     }
 
     public void turnOn()
@@ -243,16 +261,25 @@ public final class BluetoothDeviceManager
         sBluetoothAdapter.disable();
     }
 
-    public void connect(BluetoothDevice bluetoothDevice, BluetoothDeviceProfile bluetoothDeviceProfile)
+    public void connect(BluetoothDevice bluetoothDevice)
     {
+        switch (deviceType){
+            case BluetoothType.CLASSIC:
+                break;
+            case  BluetoothType.BLE:
 
-        BLEDeviceManager.getInstance().connectBLEDevice(sContext,bluetoothDevice);
+                BLEDeviceManager.getInstance().connectBLEDevice(sContext,bluetoothDevice);
+                break;
+        }
+
     }
 
-    public void disconnect(BluetoothDevice bluetoothDevice, BluetoothDeviceProfile bluetoothDeviceProfile)
+    public void disconnect(BluetoothDevice bluetoothDevice)
     {
         BLEDeviceManager.getInstance().disConnectBLEDevice();
-
     }
 
+    public void sendDebugData(byte[] debugData){
+        BLEDeviceManager.getInstance().sendDebugData(debugData);
+    }
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2016 SmartCodeUnited http://www.smartcodeunited.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.smartcodeunited.lib.bluetooth.commands;
 
 /**
@@ -6,13 +21,13 @@ package com.smartcodeunited.lib.bluetooth.commands;
 public class CommandManager {
     /**
      * <p>
-     * 判断自定义命令是否有效。
+     * Determine whether custom commands are valid.
      * </p>
      *
      * @param command
-     *            自定义通信命令 new byte[]{*********}。
+     *            Custom communication command： new byte[]{*********}。
      *
-     * @return TRUE：自定义命令有效。FALSE：自定义命令无效。
+     * @return TRUE：valid. FALSE：Invalid
      */
     public static boolean isCommandValid(byte[] command)
     {
@@ -23,25 +38,34 @@ public class CommandManager {
 
         return false;
     }
+
+    /**
+     * Send command communication example
+     * @param deviceType
+     * @param commandType
+     * @param subCommandType
+     * @param otherCommand
+     * @return
+     */
     public static byte[] build(int deviceType, int commandType,
                                int subCommandType,int... otherCommand)
     {
 
-        // 自定义命令的总长度 ＝ (头+尾+长度) + (deviceType + commandType +
+        // Total length of custom command ＝ (head+tail+length) + (deviceType + commandType +
         // subCommandType) + otherCommand.length
         int length = 3 + 3 + otherCommand.length;
 
         byte[] command = new byte[length];
 
-        // 自定义命令头部。
-        command[0] = CommandProtocol.COMMAND_HEADER;
-        // 自定义命令长度。
+        // Custom command header
+        command[0] = 1;
+        // Custom command length
         command[1] = (byte) length;
-        // 自定义命令设备类型：灯、音箱、车载MP3等。
+        // Custom command device types such as: lights, speakers, car MP3, etc..
         command[2] = (byte) deviceType;
-        // 自定义命令类型：校验、查询、控制、反馈。
+        // Custom command types: verification, inquery, control, feedback.
         command[3] = (byte) commandType;
-        // 自定义命令类型：子命令类型，依据实际情况不同而不同。
+        // Custom command type: sub command type, depending on the actual situation and different.
         command[4] = (byte) subCommandType;
 
         if ((otherCommand != null) && (otherCommand.length > 0))
@@ -52,19 +76,18 @@ public class CommandManager {
             }
         }
 
-        command[length - 1] = CommandProtocol.COMMAND_TAIL;
+        command[length - 1] = 2;
 
         return command;
     }
 
     /**
      * <p>
-     * 将byte数组转换成int。
+     * Convert byte array into int.
      * </p>
      *
      * @param bytes
-     *            byte数组。
-     * @return int数。
+     * @return int。
      *
      * @since 1.0.0
      */

@@ -1,5 +1,21 @@
+/*
+ * Copyright (C) 2016 SmartCodeUnited http://www.smartcodeunited.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.smartcodeunited.lib.bluetooth.managers;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
@@ -25,11 +41,12 @@ import java.util.UUID;
  */
 public class BLEDeviceManager {
 
+
     // / send data
     private static BluetoothGattCharacteristic writeCharacteristic; // / write
-    // Characteristic；测试值，可修改。
+    // Characteristic；uuid for test.
     private static String uuidQppService = "0000fee9-0000-1000-8000-00805f9b34fb";
-    // Characteristic；测试值，可修改。
+    // Characteristic；uuid for test.
     private static String uuidQppCharWrite = "d44bc439-abfd-45a2-b575-925416129600";
     public static final int qppServerBufferSize = 20;
     // / receive data
@@ -43,17 +60,8 @@ public class BLEDeviceManager {
     private static boolean NotifyEnabled = false;
     private static final String UUIDDes = "00002902-0000-1000-8000-00805f9b34fb";
 
-    public interface OnConnectionListener {
-        /**
-         * @param mBluetoothGatt
-         * @param state          1为连接，2为未连接
-         */
-        public void onConnectionStateChanged(BluetoothGatt mBluetoothGatt, int state);
-    }
 
     private static BLEDeviceManager sBLEDeviceManager = new BLEDeviceManager();
-
-    private static OnConnectionListener sOnConnectionListener;
 
     private static BluetoothGatt mBluetoothGatt = null;
 
@@ -94,14 +102,50 @@ public class BLEDeviceManager {
 
     public static boolean isServicesDiscovered;
 
+    public interface OnRecievedDataListener{
+        public void onRecivedData(byte[] data);
+    }
+    private  static OnRecievedDataListener sOnRecievedDataListener;
+    public void setOnRecievedDataListener(OnRecievedDataListener onRecievedDataListener){
+        sOnRecievedDataListener=onRecievedDataListener;
+    }
+
+
+    public interface OnConnectionBLEListener {
+        /**
+         * @param mBluetoothGatt
+         * @param state          connected:1,disconnected:2.
+         */
+        public void onConnectionStateChanged(BluetoothGatt mBluetoothGatt, int state);
+    }
+
+    private static OnConnectionBLEListener sOnConnectionListener;
+
+    public interface OnDiscoveryBLEListener {
+
+        public void onDiscoveryStarted();
+
+        public void onDiscoveryFinished();
+
+        public void onBluetoothDeviceBluetoothScanClassicReceived(BluetoothDevice bluetoothDevice);
+
+        public void onBluetoothDeviceBluetoothScanBLEReceived(BluetoothDevice bluetoothDevice, int rssi, byte[] scanRecord);
+    }
+
+    private static OnDiscoveryBLEListener sOnDiscoveryBLEListener;
+
     /**
-     * 连接状态监听
+     * Connection status Listener
      *
      * @param onConnectionListener
      */
-    public void setOnConnectionListener(OnConnectionListener onConnectionListener) {
+    public void setOnConnectionListener(OnConnectionBLEListener onConnectionListener) {
         sOnConnectionListener = onConnectionListener;
         Log.d(TAG, "setOnConnectionListener：" + (sOnConnectionListener == null));
+    }
+
+    public void setOnDiscoveryBLEListener(OnDiscoveryBLEListener onDiscoveryBLEListener) {
+        sOnDiscoveryBLEListener = onDiscoveryBLEListener;
     }
 
     public void connectBLEDevice(Context context, BluetoothDevice device) {
@@ -112,6 +156,10 @@ public class BLEDeviceManager {
         Log.i("tag", "connect " + mDevice.getName());
     }
 
+    /**
+     * Implements callback methods for GATT events that the app cares about.  For example,
+     * connection change and services discovered.
+     */
     private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -120,26 +168,22 @@ public class BLEDeviceManager {
                     + newState);
 
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                mBluetoothGatt.discoverServices();//扫描设备所支持的服务
+                mBluetoothGatt.discoverServices();//Scanning equipment supported by the service
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 closeGatt();
             }
             sOnConnectionListener.onConnectionStateChanged(gatt, newState);
         }
 
-        /**
-         * 设备服务的回调
-         * @param gatt
-         * @param status
-         */
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
+
             isServicesDiscovered = setEnable(gatt, uuidQppService, uuidQppCharWrite);
         }
 
         /**
-         * 写入设备的回调
+         * Write callback
          * @param gatt
          * @param characteristic
          * @param status
@@ -153,7 +197,7 @@ public class BLEDeviceManager {
         }
 
         /**
-         * 发送特征值到设备后，设备反馈应用端
+         * After the feature value is sent to the device, the device feedback application
          * @param gatt
          * @param characteristic
          */
@@ -172,16 +216,16 @@ public class BLEDeviceManager {
 
 
     /**
-     * 初始化一些必须的UUID
+     * Initialize some of the necessary UUID
      *
      * @param bluetoothGatt
-     * @param qppServiceUUID 可修改的ServiceUUID
-     * @param writeCharUUID  可修改的writeCharUUID
-     *                       可混淆，后续修改
+     * @param qppServiceUUID Modified of ServiceUUID
+     * @param writeCharUUID  Modified of writeCharUUID
      * @return
      */
-    private   boolean setEnable(BluetoothGatt bluetoothGatt,
-                                    String qppServiceUUID, String writeCharUUID) {
+    //TODO Can be confused
+    private boolean setEnable(BluetoothGatt bluetoothGatt,
+                              String qppServiceUUID, String writeCharUUID) {
         resetQppField();
         if (qppServiceUUID != null)
             uuidQppService = qppServiceUUID;
@@ -197,6 +241,7 @@ public class BLEDeviceManager {
             Log.e(TAG, "Qpp service not found");
             return false;
         }
+        //
         List<BluetoothGattCharacteristic> gattCharacteristics = qppService
                 .getCharacteristics();
         for (int j = 0; j < gattCharacteristics.size(); j++) {
@@ -211,7 +256,7 @@ public class BLEDeviceManager {
             }
         }
 
-        if (!setCharacteristicNotification(bluetoothGatt,arrayNtfCharList.get(0), true))
+        if (!setCharacteristicNotification(bluetoothGatt, arrayNtfCharList.get(0), true))
             return false;
         notifyCharaIndex++;
 
@@ -267,15 +312,14 @@ public class BLEDeviceManager {
     }
 
 
-
     /**
-     * 接收设备端数据
+     * Receiving device data
      *
      * @param bluetoothGatt
      * @param characteristic
      */
-    private  void updateValueForNotification(BluetoothGatt bluetoothGatt,
-                                                  BluetoothGattCharacteristic characteristic) {
+    private void updateValueForNotification(BluetoothGatt bluetoothGatt,
+                                            BluetoothGattCharacteristic characteristic) {
         if (bluetoothGatt == null || characteristic == null) {
             Log.e(TAG, "invalid arguments");
             return;
@@ -298,8 +342,15 @@ public class BLEDeviceManager {
     }
 
 
-    private  boolean sendData(BluetoothGatt bluetoothGatt,
-                                       String qppData) {
+    /**
+     * send data to device
+     *
+     * @param bluetoothGatt
+     * @param qppData
+     * @return
+     */
+    private boolean sendData(BluetoothGatt bluetoothGatt,
+                             String qppData) {
         boolean ret = false;
         if (bluetoothGatt == null) {
             Log.e(TAG, "BluetoothAdapter not initialized !");
@@ -315,7 +366,14 @@ public class BLEDeviceManager {
     }
 
 
-    private  boolean sendData(BluetoothGatt bluetoothGatt,   byte[] bytes) {
+    /**
+     * send data to device
+     *
+     * @param bluetoothGatt
+     * @param bytes
+     * @return
+     */
+    private boolean sendData(BluetoothGatt bluetoothGatt, byte[] bytes) {
         boolean ret = false;
         if (bluetoothGatt == null) {
             Log.e(TAG, "BluetoothAdapter not initialized !");
@@ -332,21 +390,27 @@ public class BLEDeviceManager {
 
     /**
      * parse the receive command
+     *
      * @param commands
      */
-    private  void parse(final byte[] commands) {
+    private void parse(final byte[] commands) {
         handler.post(new Runnable() {
 
             @Override
             public void run() {
+                if (sOnRecievedDataListener!=null){
+                    sOnRecievedDataListener.onRecivedData(commands);
+                }
                 switch (commands[0]) {
-                    case CommandProtocol.Type.FEEDBACK_INQUIRY: {
+                    case CommandProtocol.Type.FEEDBACK_CONTROL: {
+
                     }
                     break;
                 }
             }
         });
     }
+
     public void closeGatt() {
 
         if (mBluetoothGatt != null) {
@@ -361,6 +425,49 @@ public class BLEDeviceManager {
             return;
         }
         mBluetoothGatt.disconnect();
-        mBluetoothGatt=null;
+        mBluetoothGatt = null;
     }
+
+    private boolean mScanning;
+    private Handler mHandler = new Handler();
+    // Stops scanning after 10 seconds.
+
+
+    public void scanBLE() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mScanning = false;
+                if (sOnDiscoveryBLEListener != null)
+                    sOnDiscoveryBLEListener.onDiscoveryFinished();
+                BluetoothDeviceManager.getBluetoothAdapter().stopLeScan(mLeScanCallback);
+            }
+        }, CommandProtocol.SCAN_TIMEOUT);
+        if (sOnDiscoveryBLEListener != null)
+            sOnDiscoveryBLEListener.onDiscoveryStarted();
+        mScanning = true;
+        BluetoothDeviceManager.getBluetoothAdapter().startLeScan(mLeScanCallback);
+    }
+
+    public void stopScan() {
+        if (mScanning)
+            BluetoothDeviceManager.getBluetoothAdapter().stopLeScan(mLeScanCallback);
+    }
+
+    private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
+        @Override
+        public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
+            if (sOnDiscoveryBLEListener != null)
+                sOnDiscoveryBLEListener.onBluetoothDeviceBluetoothScanBLEReceived(device,rssi,scanRecord);
+        }
+    };
+
+    /**
+     * send commands to device for test
+     * @param testByte
+     */
+    public void sendDebugData(byte[] testByte) {
+        sendData(mBluetoothGatt,testByte);
+    }
+
 }

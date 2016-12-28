@@ -1,4 +1,4 @@
-package com.smartcodeunited.lib.bluetooth;
+package com.smartcodeunited.demo.bluetooth;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
