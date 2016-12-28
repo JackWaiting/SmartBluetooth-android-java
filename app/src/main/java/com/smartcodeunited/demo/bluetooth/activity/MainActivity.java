@@ -15,18 +15,72 @@
  */
 package com.smartcodeunited.demo.bluetooth.activity;
 
+import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ListView;
 
 import com.smartcodeunited.demo.bluetooth.R;
+import com.smartcodeunited.demo.bluetooth.adapter.BluetoothAdapter;
+import com.smartcodeunited.demo.bluetooth.bluetooth.BluetoothDeviceManagerProxy;
+
+import java.util.List;
 
 /**
  * Created by JackWaiting on 2016/12/27.
  */
-public class MainActivity extends BluetoothActivity{
+public class MainActivity extends BluetoothActivity implements View.OnClickListener{
+
+    private BluetoothAdapter bluetoothAdapter;
+    private ListView bluetoothListView;
+    private BluetoothDeviceManagerProxy proxy;
+
+
+    @Override
+    public void scanCallback(List<BluetoothDevice> mListBluetoothDevices) {
+
+        if(bluetoothAdapter != null){
+            bluetoothAdapter.setList(getBluetoothDeviceList());
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initBase();
+        initView();
+    }
+
+    private void initBase() {
+        proxy = BluetoothDeviceManagerProxy.getInstance();
+    }
+
+    private void initView() {
+        bluetoothListView = (ListView) findViewById(R.id.lv_bluetooth);
+        bluetoothAdapter = new BluetoothAdapter(this);
+        bluetoothListView.setAdapter(bluetoothAdapter);
+
+        findViewById(R.id.btn_start_scanning).setOnClickListener(this);
+        findViewById(R.id.btn_stop_scanning).setOnClickListener(this);
+        findViewById(R.id.btn_disconnected).setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()){
+            case R.id.btn_start_scanning:
+                if(proxy != null){
+                    proxy.startScanning();
+                }
+                break;
+
+            case R.id.btn_stop_scanning:
+                break;
+
+            case R.id.btn_disconnected:
+                break;
+        }
     }
 }

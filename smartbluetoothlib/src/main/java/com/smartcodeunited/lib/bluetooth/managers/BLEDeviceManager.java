@@ -168,7 +168,7 @@ public class BLEDeviceManager {
                     + newState);
 
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                mBluetoothGatt.discoverServices();//扫描设备所支持的服务
+                mBluetoothGatt.discoverServices();//Scanning equipment supported by the service
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 closeGatt();
             }
