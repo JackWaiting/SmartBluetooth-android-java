@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SmartBluetooth.iml" filepath="$PROJECT_DIR$/SmartBluetooth.iml" />
       <module fileurl="file://$PROJECT_DIR$/SmartBluetooth-android-java.iml" filepath="$PROJECT_DIR$/SmartBluetooth-android-java.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/smartbluetoothlib/smartbluetoothlib.iml" filepath="$PROJECT_DIR$/smartbluetoothlib/smartbluetoothlib.iml" />
