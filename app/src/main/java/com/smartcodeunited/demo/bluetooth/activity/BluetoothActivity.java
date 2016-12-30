@@ -17,6 +17,7 @@ package com.smartcodeunited.demo.bluetooth.activity;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -48,7 +49,21 @@ public abstract class BluetoothActivity extends Activity implements View.OnClick
         blzMan = BluetoothDeviceManagerProxy
                 .getInstance(getApplicationContext());
         blzMan.setScanningListener(onDiscoveryBLEListener);
+        blzMan.addOnBluetoothDeviceConnectionStateChangedListener(onConnectionBLEListener);
     }
+
+    public void connectDevice(BluetoothDevice bluetoothDevice){
+        if(blzMan != null){
+            blzMan.connectDevice(bluetoothDevice);
+        }
+    }
+
+    private BLEDeviceManager.OnConnectionBLEListener onConnectionBLEListener = new BLEDeviceManager.OnConnectionBLEListener() {
+        @Override
+        public void onConnectionStateChanged(BluetoothGatt mBluetoothGatt, int state) {
+
+        }
+    };
 
     private BLEDeviceManager.OnDiscoveryBLEListener onDiscoveryBLEListener = new BLEDeviceManager.OnDiscoveryBLEListener() {
         @Override

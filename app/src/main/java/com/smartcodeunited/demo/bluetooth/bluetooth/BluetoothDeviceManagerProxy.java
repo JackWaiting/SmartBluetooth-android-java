@@ -16,11 +16,15 @@
 package com.smartcodeunited.demo.bluetooth.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.content.Context;
 import android.util.Log;
 
 import com.smartcodeunited.lib.bluetooth.managers.BLEDeviceManager;
 import com.smartcodeunited.lib.bluetooth.managers.BluetoothDeviceManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by JackWaiting on 2016/12/27.
@@ -35,6 +39,12 @@ public class BluetoothDeviceManagerProxy  {
     private static int currentDeviceMode;  //The current connection mode
     private boolean bluzManReady = false;
     private boolean scanning = false;
+    private boolean connecting = false;
+
+    /**
+     * Connection status monitoring collection
+     */
+    private List<BLEDeviceManager.OnConnectionBLEListener> conStateListener;
 
     /**
      * Bluetooth control class library
@@ -85,12 +95,14 @@ public class BluetoothDeviceManagerProxy  {
             bluzManReady = false;
             bluzDeviceMan = BluetoothDeviceManager.getInstance(context);
             bluzDeviceMan.setDeviceType(BluetoothDeviceManager.BluetoothType.BLE);
+            bluzDeviceMan.setOnBluetoothDeviceBluetoothStatusListener(onConnectionBLEListener);
         }
         return bluzDeviceMan;
     }
 
     private BluetoothDeviceManagerProxy(Context context) {
         this.context = context.getApplicationContext();
+        conStateListener = new ArrayList<>();
         getBluetoothDeviceManager();
     }
 
@@ -116,14 +128,46 @@ public class BluetoothDeviceManagerProxy  {
 
     /**
      * Scan bluetooth devices
-     *
-     *
      */
     public void startScanning() {
         Log.i("startDiscoverys", "startDiscoverys");
         bluzDeviceMan = getBluetoothDeviceManager();
         bluzDeviceMan.setOnBluetoothDeviceBluetoothScanningListener(onScanBLEListener);
         bluzDeviceMan.startScan();
+    }
+
+    /**
+     * Disconnected bluetooth
+     */
+    public void disconnected() {
+        if (bluzDeviceMan != null && connected) {
+            bluzDeviceMan.disconnect(connectedDevice);
+        }
+    }
+
+    /**
+     * Connect bluetooth
+     *
+     * @param device
+     * @return
+     */
+    public boolean connectDevice(BluetoothDevice device) {
+        Log.i("connectDevice", "connectDevice+device");
+        connecting = true;
+        bluzDeviceMan = getBluetoothDeviceManager();
+        Log.i("connectDevice", "connectDevice+else");
+        bluzDeviceMan.connect(device);
+        return false;
+    }
+
+    public void addOnBluetoothDeviceConnectionStateChangedListener(
+            BLEDeviceManager.OnConnectionBLEListener listener) {
+        conStateListener.add(listener);
+    }
+
+    public void removeOnBluetoothDeviceConnectionStateChangedListener(
+            BLEDeviceManager.OnConnectionBLEListener listener) {
+        conStateListener.remove(listener);
     }
 
     private BLEDeviceManager.OnDiscoveryBLEListener onBluetoothDeviceDiscoveryListener;
@@ -136,6 +180,38 @@ public class BluetoothDeviceManagerProxy  {
     public void removeScanningListener(BLEDeviceManager.OnDiscoveryBLEListener discoveryListener) {
         if (discoveryListener == onBluetoothDeviceDiscoveryListener) {
             onBluetoothDeviceDiscoveryListener = null;
+        }
+    }
+
+    private BLEDeviceManager.OnConnectionBLEListener onConnectionBLEListener = new BLEDeviceManager.OnConnectionBLEListener() {
+        @Override
+        public void onConnectionStateChanged(BluetoothGatt mBluetoothGatt, int state) {
+
+            Log.i("onConnectionState",mBluetoothGatt.getDevice()+ "     state= "+state);
+            switch (state) {
+                case BluetoothDeviceManager.BluetoothDeviceConnectionStatus.CONNECTED:
+                    connected = true;
+                    break;
+                case BluetoothDeviceManager.BluetoothDeviceConnectionStatus.DISCONNECTED:
+                    connected = false;
+                    break;
+            }
+            connecting = false;
+            notifyConntectionStateChanged(mBluetoothGatt, state);
+        }
+    };
+
+    /**
+     * Notify the listener, bluetooth connection state changes
+     *
+     * @param mBluetoothGatt
+     * @param state
+     */
+    private void notifyConntectionStateChanged(BluetoothGatt mBluetoothGatt, int state) {
+
+        int sizes = conStateListener.size();
+        for (int i = 0; i < sizes; i++) {
+            conStateListener.get(i).onConnectionStateChanged( mBluetoothGatt, state);
         }
     }
 
