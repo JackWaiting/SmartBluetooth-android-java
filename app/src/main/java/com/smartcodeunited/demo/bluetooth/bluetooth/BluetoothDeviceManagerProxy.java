@@ -22,9 +22,6 @@ import android.util.Log;
 import com.smartcodeunited.lib.bluetooth.managers.BLEDeviceManager;
 import com.smartcodeunited.lib.bluetooth.managers.BluetoothDeviceManager;
 
-/**
- * Created by JackWaiting on 2016/12/27.
- */
 public class BluetoothDeviceManagerProxy  {
 
     public static final String TAG = "BluetoothDeviceManagerProxy";

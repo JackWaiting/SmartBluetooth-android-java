@@ -26,9 +26,7 @@ import com.smartcodeunited.demo.bluetooth.bluetooth.BluetoothDeviceManagerProxy;
 
 import java.util.List;
 
-/**
- * Created by JackWaiting on 2016/12/27.
- */
+
 public class MainActivity extends BluetoothActivity implements View.OnClickListener{
 
     private BluetoothAdapter bluetoothAdapter;
