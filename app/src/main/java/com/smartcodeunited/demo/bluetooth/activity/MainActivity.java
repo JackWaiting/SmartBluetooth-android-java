@@ -18,12 +18,14 @@ package com.smartcodeunited.demo.bluetooth.activity;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.smartcodeunited.demo.bluetooth.R;
 import com.smartcodeunited.demo.bluetooth.adapter.BluetoothAdapter;
 import com.smartcodeunited.demo.bluetooth.bluetooth.BluetoothDeviceManagerProxy;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,13 +34,14 @@ public class MainActivity extends BluetoothActivity implements View.OnClickListe
     private BluetoothAdapter bluetoothAdapter;
     private ListView bluetoothListView;
     private BluetoothDeviceManagerProxy proxy;
-
+    private List<BluetoothDevice> bluetoothDevices = new ArrayList<>();
 
     @Override
     public void scanCallback(List<BluetoothDevice> mListBluetoothDevices) {
 
         if(bluetoothAdapter != null){
-            bluetoothAdapter.setList(getBluetoothDeviceList());
+            bluetoothDevices = mListBluetoothDevices;
+            bluetoothAdapter.setList(mListBluetoothDevices);
         }
     }
 
@@ -48,6 +51,19 @@ public class MainActivity extends BluetoothActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         initBase();
         initView();
+        setItemClick();
+    }
+
+    private void setItemClick() {
+        if(bluetoothListView != null){
+            bluetoothListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if(bluetoothDevices!= null && bluetoothDevices.size() > 0)
+                        connectDevice(bluetoothDevices.get(position));
+                }
+            });
+        }
     }
 
     private void initBase() {
