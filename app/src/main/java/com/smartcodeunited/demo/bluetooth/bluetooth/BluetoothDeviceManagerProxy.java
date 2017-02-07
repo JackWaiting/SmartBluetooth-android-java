@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class BluetoothDeviceManagerProxy  {
 
-    public static final String TAG = "BluetoothDeviceManagerProxy";
+    public static final String TAG = "DeviceManagerProxy";
     public static final String MAC_ADDRESS_FILTER_PREFIX = "";
 
     private boolean modifieds = false;
@@ -248,7 +248,7 @@ public class BluetoothDeviceManagerProxy  {
         @Override
         public void onBluetoothDeviceBluetoothScanBLEReceived(BluetoothDevice bluetoothDevice, int rssi, byte[] scanRecord) {
             String address = bluetoothDevice.getAddress();
-
+            Log.i(TAG,"bluetoothDeviceName= "+ bluetoothDevice.getName() +"       bluetoothDeviceAddress="+bluetoothDevice.getAddress());
             if (address.startsWith(MAC_ADDRESS_FILTER_PREFIX)) {
                 targetDevice = bluetoothDevice;
                 if (onBluetoothDeviceDiscoveryListener != null) {
