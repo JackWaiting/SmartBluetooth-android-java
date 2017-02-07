@@ -3,12 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:tag="notitle"
     android:background="@color/bg_color"
     tools:context=".activity.BluetoothActivity">
 
 
     <LinearLayout
         android:id="@+id/ll_root"
+        android:layout_marginTop="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button

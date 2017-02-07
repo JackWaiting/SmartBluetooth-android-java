@@ -31,6 +31,7 @@ public class BluetoothItemView extends FrameLayout {
 		if(bluetoothDevice == null){
 			return;
 		}
+		bluetoothDevice.getUuids();
 		tvDeviceName.setText(bluetoothDevice.getName());
 		tvDeviceAddress.setText(bluetoothDevice.getAddress());
 	}

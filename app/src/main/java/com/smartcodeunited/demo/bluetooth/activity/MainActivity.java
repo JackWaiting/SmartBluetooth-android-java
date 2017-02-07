@@ -16,7 +16,6 @@
 package com.smartcodeunited.demo.bluetooth.activity;
 
 import android.bluetooth.BluetoothDevice;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -46,12 +45,8 @@ public class MainActivity extends BluetoothActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        initBase();
-        initView();
-        setItemClick();
+    protected int getContentLayoutId() {
+        return R.layout.activity_main;
     }
 
     private void setItemClick() {
@@ -65,9 +60,15 @@ public class MainActivity extends BluetoothActivity implements View.OnClickListe
             });
         }
     }
+    @Override
+    protected void initBase() {
+        proxy = BluetoothDeviceManagerProxy.getInstance(this);
+    }
 
-    private void initBase() {
-        proxy = BluetoothDeviceManagerProxy.getInstance();
+    @Override
+    protected void initUI() {
+        initView();
+        setItemClick();
     }
 
     private void initView() {

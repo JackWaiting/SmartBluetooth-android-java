@@ -15,7 +15,6 @@
  */
 package com.smartcodeunited.demo.bluetooth.activity;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.os.Bundle;
@@ -28,11 +27,11 @@ import com.smartcodeunited.lib.bluetooth.managers.BLEDeviceManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BluetoothActivity extends Activity implements View.OnClickListener {
+public abstract class BluetoothActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "BluetoothActivity";
-    BluetoothDeviceManagerProxy blzMan;
+    private BluetoothDeviceManagerProxy blzMan;
 
-    private List<BluetoothDevice> mListBluetoothDevices = new ArrayList<BluetoothDevice>(); //New search list of bluetooth
+    private List<BluetoothDevice> mListBluetoothDevices = new ArrayList<>(); //New search list of bluetooth
     public abstract void scanCallback(List<BluetoothDevice> mListBluetoothDevices);
 
     public List<BluetoothDevice> getBluetoothDeviceList(){
@@ -40,9 +39,11 @@ public abstract class BluetoothActivity extends Activity implements View.OnClick
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("我走了這裡","走了");
         initBluetoothManager();
+
     }
 
     private void initBluetoothManager() {
