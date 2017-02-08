@@ -216,6 +216,11 @@ public final class BluetoothDeviceManager
         return false;
     }
 
+    public boolean isScanning()
+    {
+        return false;
+    }
+
     public boolean isScanning(BluetoothType bluetoothType)
     {
         return false;
@@ -236,12 +241,10 @@ public final class BluetoothDeviceManager
      */
     public void startScan()
     {
-
         switch (getDeviceType()){
             case BluetoothType.CLASSIC:
                 break;
             case BluetoothType.BLE:
-
                 BLEDeviceManager.getInstance().scanBLE();
                 break;
         }

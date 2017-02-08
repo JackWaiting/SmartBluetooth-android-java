@@ -15,19 +15,82 @@
  */
 package com.smartcodeunited.demo.bluetooth.activity;
 
-import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
-import com.smartcodeunited.demo.bluetooth.R;
+import com.smartcodeunited.demo.bluetooth.bluetooth.BluetoothDeviceManagerProxy;
+import com.smartcodeunited.lib.bluetooth.managers.BLEDeviceManager;
 
-public class BluetoothActivity extends Activity implements View.OnClickListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class BluetoothActivity extends BaseActivity implements View.OnClickListener {
+    private static final String TAG = "BluetoothActivity";
+    private BluetoothDeviceManagerProxy blzMan;
+
+    private List<BluetoothDevice> mListBluetoothDevices = new ArrayList<>(); //New search list of bluetooth
+    public abstract void scanCallback(List<BluetoothDevice> mListBluetoothDevices);
+
+    public List<BluetoothDevice> getBluetoothDeviceList(){
+        return mListBluetoothDevices;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bluetooth);
+        Log.i("我走了這裡","走了");
+        initBluetoothManager();
+
     }
+
+    private void initBluetoothManager() {
+        blzMan = BluetoothDeviceManagerProxy
+                .getInstance(getApplicationContext());
+        blzMan.setScanningListener(onDiscoveryBLEListener);
+        blzMan.addOnBluetoothDeviceConnectionStateChangedListener(onConnectionBLEListener);
+    }
+
+    public void connectDevice(BluetoothDevice bluetoothDevice){
+        if(blzMan != null){
+            blzMan.connectDevice(bluetoothDevice);
+        }
+    }
+
+    private BLEDeviceManager.OnConnectionBLEListener onConnectionBLEListener = new BLEDeviceManager.OnConnectionBLEListener() {
+        @Override
+        public void onConnectionStateChanged(BluetoothGatt mBluetoothGatt, int state) {
+
+        }
+    };
+
+    private BLEDeviceManager.OnDiscoveryBLEListener onDiscoveryBLEListener = new BLEDeviceManager.OnDiscoveryBLEListener() {
+        @Override
+        public void onDiscoveryStarted() {
+            mListBluetoothDevices.clear();
+        }
+
+        @Override
+        public void onDiscoveryFinished() {
+
+        }
+
+        @Override
+        public void onBluetoothDeviceBluetoothScanClassicReceived(BluetoothDevice bluetoothDevice) {
+
+        }
+
+        @Override
+        public void onBluetoothDeviceBluetoothScanBLEReceived(BluetoothDevice bluetoothDevice, int rssi, byte[] scanRecord) {
+
+            Log.i(TAG,"bluetoothDeviceName= "+ bluetoothDevice.getName() +"       bluetoothDeviceAddress="+bluetoothDevice.getAddress());
+            mListBluetoothDevices.add(bluetoothDevice);
+            scanCallback(mListBluetoothDevices);
+
+        }
+    };
 
     @Override
     public void onClick(View v) {
