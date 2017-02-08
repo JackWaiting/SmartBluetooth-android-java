@@ -463,6 +463,16 @@ public class BLEDeviceManager {
         mBluetoothGatt = null;
     }
 
+    /**
+     * <p>
+     * Result device for scanning once.
+     * </p>
+     *
+     * @reset The variable must be reset at the proper time!
+     *
+     * @since 1.0.0
+     */
+    private  List<BluetoothDevice> mBluetoothDevicesFound = new ArrayList<BluetoothDevice>();
     private boolean mScanning;
     private Handler mHandler = new Handler();
     // Stops scanning after 10 seconds.
@@ -474,9 +484,7 @@ public class BLEDeviceManager {
             public void run() {
                 mScanning = false;
                 if (sOnDiscoveryBLEListener != null){
-                    if (mBluetoothDevicesFound != null) {
-                        mBluetoothDevicesFound.clear();
-                    }
+
                     sOnDiscoveryBLEListener.onDiscoveryFinished();
                 }
                 BluetoothDeviceManager.getBluetoothAdapter().stopLeScan(mLeScanCallback);
@@ -484,6 +492,9 @@ public class BLEDeviceManager {
         }, CommandProtocol.SCAN_TIMEOUT);
         if (sOnDiscoveryBLEListener != null)
             sOnDiscoveryBLEListener.onDiscoveryStarted();
+        if (mBluetoothDevicesFound != null) {
+            mBluetoothDevicesFound.clear();
+        }
         mScanning = true;
         BluetoothDeviceManager.getBluetoothAdapter().startLeScan(mLeScanCallback);
     }
@@ -497,26 +508,14 @@ public class BLEDeviceManager {
         }
     }
 
-
-    /**
-     * <p>
-     * Result device for scanning once.
-     * </p>
-     *
-     * @reset The variable must be reset at the proper time!
-     *
-     * @since 1.0.0
-     */
-    private  List<BluetoothDevice> mBluetoothDevicesFound = new ArrayList<BluetoothDevice>();
-
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
             if (sOnDiscoveryBLEListener != null){
+                mBluetoothDevicesFound.add(device);
                 for (BluetoothDevice bluetoothDevice:mBluetoothDevicesFound){
                     if (!bluetoothDevice.getAddress().equalsIgnoreCase(device.getAddress())){
 
-                        mBluetoothDevicesFound.add(device);
                         sOnDiscoveryBLEListener.onBluetoothDeviceBluetoothScanBLEReceived(device, rssi, scanRecord);
                     }
                 }
