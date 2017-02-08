@@ -137,10 +137,11 @@ public class BLEDeviceManager {
 
     private static OnDiscoveryBLEListener sOnDiscoveryBLEListener;
 
-    public interface OnDiscoveryServiceBLEListener{
+    public interface OnDiscoveryServiceBLEListener {
         public void onDiscoveryServiceChar(String UUIDService, BluetoothGattCharacteristic gattCharacteristic);
     }
-    private  static OnDiscoveryServiceBLEListener sOnDiscoveryServiceBLEListener;
+
+    private static OnDiscoveryServiceBLEListener sOnDiscoveryServiceBLEListener;
 
 
     /**
@@ -155,8 +156,9 @@ public class BLEDeviceManager {
     public void setOnDiscoveryBLEListener(OnDiscoveryBLEListener onDiscoveryBLEListener) {
         sOnDiscoveryBLEListener = onDiscoveryBLEListener;
     }
-    public void setOnDiscoveryServiceBLEListener(OnDiscoveryServiceBLEListener onDiscoveryServiceBLEListener){
-        sOnDiscoveryServiceBLEListener=onDiscoveryServiceBLEListener;
+
+    public void setOnDiscoveryServiceBLEListener(OnDiscoveryServiceBLEListener onDiscoveryServiceBLEListener) {
+        sOnDiscoveryServiceBLEListener = onDiscoveryServiceBLEListener;
     }
 
 
@@ -182,7 +184,7 @@ public class BLEDeviceManager {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 mBluetoothGatt.discoverServices();//Scanning equipment supported by the service
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                isServicesDiscovered=false;
+                isServicesDiscovered = false;
                 closeGatt();
             }
             sOnConnectionListener.onConnectionStateChanged(gatt, newState);
@@ -198,17 +200,16 @@ public class BLEDeviceManager {
                 for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
                     int charaProp = gattCharacteristic.getProperties();
 //                    if ((charaProp | BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) {
-                        if (sOnDiscoveryServiceBLEListener != null)
-                            sOnDiscoveryServiceBLEListener.onDiscoveryServiceChar(service.getUuid().toString(), gattCharacteristic);
-                        Log.e(TAG, "gattCharacteristic UUID-->" + gattCharacteristic.getUuid());
+                    if (sOnDiscoveryServiceBLEListener != null)
+                        sOnDiscoveryServiceBLEListener.onDiscoveryServiceChar(service.getUuid().toString(), gattCharacteristic);
+                    Log.e(TAG, "gattCharacteristic UUID-->" + gattCharacteristic.getUuid());
 
-                        if (!isServicesDiscovered){
-                            isServicesDiscovered = setEnable(gatt, service.getUuid().toString(), gattCharacteristic.getUuid().toString());
-                        }
+                    if (!isServicesDiscovered) {
+                        isServicesDiscovered = setEnable(gatt, service.getUuid().toString(), gattCharacteristic.getUuid().toString());
+                    }
 //                    }
                 }
             }
-
 
 
         }
@@ -217,6 +218,7 @@ public class BLEDeviceManager {
             uuidQppService = uuidService;
             writeCharacteristic = gattCharacteristic;
         }
+
         /**
          * Write callback
          * @param gatt
@@ -469,10 +471,9 @@ public class BLEDeviceManager {
      * </p>
      *
      * @reset The variable must be reset at the proper time!
-     *
      * @since 1.0.0
      */
-    private  List<BluetoothDevice> mBluetoothDevicesFound = new ArrayList<BluetoothDevice>();
+    private List<BluetoothDevice> mBluetoothDevicesFound = new ArrayList<BluetoothDevice>();
     private boolean mScanning;
     private Handler mHandler = new Handler();
     // Stops scanning after 10 seconds.
@@ -483,7 +484,7 @@ public class BLEDeviceManager {
             @Override
             public void run() {
                 mScanning = false;
-                if (sOnDiscoveryBLEListener != null){
+                if (sOnDiscoveryBLEListener != null) {
 
                     sOnDiscoveryBLEListener.onDiscoveryFinished();
                 }
@@ -500,7 +501,7 @@ public class BLEDeviceManager {
     }
 
     public void stopScan() {
-        if (mScanning){
+        if (mScanning) {
             if (mBluetoothDevicesFound != null) {
                 mBluetoothDevicesFound.clear();
             }
@@ -508,17 +509,22 @@ public class BLEDeviceManager {
         }
     }
 
+    private boolean isDeviceRepeat;
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-            if (sOnDiscoveryBLEListener != null){
-                mBluetoothDevicesFound.add(device);
-                for (BluetoothDevice bluetoothDevice:mBluetoothDevicesFound){
-                    if (!bluetoothDevice.getAddress().equalsIgnoreCase(device.getAddress())){
+            if (sOnDiscoveryBLEListener != null) {
+                isDeviceRepeat = false;
 
-                        sOnDiscoveryBLEListener.onBluetoothDeviceBluetoothScanBLEReceived(device, rssi, scanRecord);
+                for (BluetoothDevice bluetoothDevice : mBluetoothDevicesFound) {
+                    if (bluetoothDevice.getAddress().equalsIgnoreCase(device.getAddress())) {
 
+                        isDeviceRepeat = true;
                     }
+                }
+                if (!isDeviceRepeat) {
+                    mBluetoothDevicesFound.add(device);
+                    sOnDiscoveryBLEListener.onBluetoothDeviceBluetoothScanBLEReceived(device, rssi, scanRecord);
                 }
 
 
