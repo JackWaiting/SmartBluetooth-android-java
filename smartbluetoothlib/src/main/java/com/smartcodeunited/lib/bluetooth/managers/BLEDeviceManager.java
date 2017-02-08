@@ -197,7 +197,7 @@ public class BLEDeviceManager {
                         .getCharacteristics();
                 for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
                     int charaProp = gattCharacteristic.getProperties();
-                    if ((charaProp | BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) {
+//                    if ((charaProp | BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) {
                         if (sOnDiscoveryServiceBLEListener != null)
                             sOnDiscoveryServiceBLEListener.onDiscoveryServiceChar(service.getUuid().toString(), gattCharacteristic);
                         Log.e(TAG, "gattCharacteristic UUID-->" + gattCharacteristic.getUuid());
@@ -205,7 +205,7 @@ public class BLEDeviceManager {
                         if (!isServicesDiscovered){
                             isServicesDiscovered = setEnable(gatt, service.getUuid().toString(), gattCharacteristic.getUuid().toString());
                         }
-                    }
+//                    }
                 }
             }
 
