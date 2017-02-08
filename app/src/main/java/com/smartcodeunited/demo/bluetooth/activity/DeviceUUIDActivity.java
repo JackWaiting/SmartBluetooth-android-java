@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.smartcodeunited.demo.bluetooth.activity;
 
-package com.smartcodeunited.lib.bluetooth.application;
+import android.app.Activity;
+import android.os.Bundle;
 
-import android.app.Application;
-import android.text.TextUtils;
+import com.smartcodeunited.demo.bluetooth.R;
 
-public class CustomApplication extends Application {
+public class DeviceUUIDActivity extends Activity {
 
     @Override
-    public void onCreate() {
-
-        super.onCreate();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_device_uuid);
     }
 }
