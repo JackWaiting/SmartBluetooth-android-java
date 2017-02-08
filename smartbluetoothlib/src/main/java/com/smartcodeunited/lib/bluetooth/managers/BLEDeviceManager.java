@@ -509,28 +509,26 @@ public class BLEDeviceManager {
         }
     }
 
-    private boolean isDeviceRepeat;
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
             if (sOnDiscoveryBLEListener != null) {
-                isDeviceRepeat = false;
-
-                for (BluetoothDevice bluetoothDevice : mBluetoothDevicesFound) {
-                    if (bluetoothDevice.getAddress().equalsIgnoreCase(device.getAddress())) {
-
-                        isDeviceRepeat = true;
-                    }
-                }
-                if (!isDeviceRepeat) {
-                    mBluetoothDevicesFound.add(device);
+                if (filterRepeatDevice(device))
                     sOnDiscoveryBLEListener.onBluetoothDeviceBluetoothScanBLEReceived(device, rssi, scanRecord);
-                }
-
-
             }
         }
     };
+
+    private boolean filterRepeatDevice(BluetoothDevice device) {
+        for (BluetoothDevice bluetoothDevice : mBluetoothDevicesFound) {
+            if (bluetoothDevice.getAddress().equalsIgnoreCase(device.getAddress())) {
+
+                return false;
+            }
+        }
+        mBluetoothDevicesFound.add(device);
+        return true;
+    }
 
     /**
      * send commands to device for test
