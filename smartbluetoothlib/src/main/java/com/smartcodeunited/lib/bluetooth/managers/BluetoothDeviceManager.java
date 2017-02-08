@@ -181,6 +181,14 @@ public final class BluetoothDeviceManager
     {
         BLEDeviceManager.getInstance().setOnDiscoveryBLEListener(onDiscoveryBLEListener);
     }
+
+
+    public void setOnDiscoveryServiceBLEListener(BLEDeviceManager.OnDiscoveryServiceBLEListener onDiscoveryServiceBLEListener)
+    {
+        BLEDeviceManager.getInstance().setOnDiscoveryServiceBLEListener(onDiscoveryServiceBLEListener);
+    }
+
+
     public void setOnBluetoothDeviceDataReceived(BLEDeviceManager.OnReceivedDataListener onBluetoothDeviceDataReceived){
         BLEDeviceManager.getInstance().setOnReceivedDataListener(onBluetoothDeviceDataReceived);
     }
@@ -288,5 +296,8 @@ public final class BluetoothDeviceManager
 
     public void sendDebugData(byte[] debugData){
         BLEDeviceManager.getInstance().sendDebugData(debugData);
+    }
+    public void sendDebugData(String testStrings){
+        BLEDeviceManager.getInstance().sendDebugData(testStrings);
     }
 }

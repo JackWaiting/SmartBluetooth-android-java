@@ -536,4 +536,14 @@ public class BLEDeviceManager {
         sendData(mBluetoothGatt, testByte);
     }
 
+    /**
+     * send commands to device for test
+     *
+     * @param testStrings
+     */
+    public void sendDebugData(String testStrings) {
+        sendData(mBluetoothGatt, testStrings);
+    }
+
+
 }
