@@ -16,6 +16,9 @@
 package com.smartcodeunited.demo.bluetooth.activity;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattService;
+import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -34,6 +37,7 @@ public class MainActivity extends BluetoothActivity implements View.OnClickListe
     private ListView bluetoothListView;
     private BluetoothDeviceManagerProxy proxy;
     private List<BluetoothDevice> bluetoothDevices = new ArrayList<>();
+    private List<BluetoothGattService> bluetoothGattServices = new ArrayList<>();
 
     @Override
     public void scanCallback(List<BluetoothDevice> mListBluetoothDevices) {
@@ -42,6 +46,19 @@ public class MainActivity extends BluetoothActivity implements View.OnClickListe
             bluetoothDevices = mListBluetoothDevices;
             bluetoothAdapter.setList(mListBluetoothDevices);
         }
+    }
+
+    @Override
+    public void connectCallback(BluetoothGatt mBluetoothGatt, int state) {
+
+        if(mBluetoothGatt != null){
+           if(state == 2){
+                Intent intent = new Intent(this,DeviceUUIDActivity.class);
+                intent.putExtra("mBluetoothGattName",mBluetoothGatt.getDevice().getName());
+                startActivity(intent);
+            }
+        }
+
     }
 
     @Override

@@ -289,7 +289,7 @@ public final class BluetoothDeviceManager
 
     }
 
-    public void disconnect(BluetoothDevice bluetoothDevice)
+    public void disconnect()
     {
         BLEDeviceManager.getInstance().disConnectBLEDevice();
     }

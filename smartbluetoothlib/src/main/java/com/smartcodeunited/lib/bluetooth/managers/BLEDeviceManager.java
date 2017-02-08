@@ -517,7 +517,6 @@ public class BLEDeviceManager {
                     if (!bluetoothDevice.getAddress().equalsIgnoreCase(device.getAddress())){
 
                         sOnDiscoveryBLEListener.onBluetoothDeviceBluetoothScanBLEReceived(device, rssi, scanRecord);
-
                     }
                 }
 

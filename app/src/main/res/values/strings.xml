@@ -4,4 +4,7 @@
     <string name="start_scan">Start scan</string>
     <string name="stop_scan">Stop scan</string>
     <string name="disconnected">Disconnect</string>
+    <string name="service_uuid">Service UUID:</string>
+    <string name="characteristic_uuid">Characteristic UUID:</string>
+    <string name="back">Back</string>
 </resources>
