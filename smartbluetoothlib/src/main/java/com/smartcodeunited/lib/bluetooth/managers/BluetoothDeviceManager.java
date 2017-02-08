@@ -181,8 +181,8 @@ public final class BluetoothDeviceManager
     {
         BLEDeviceManager.getInstance().setOnDiscoveryBLEListener(onDiscoveryBLEListener);
     }
-    public void setOnBluetoothDeviceDataRecieved(BLEDeviceManager.OnRecievedDataListener onBluetoothDeviceDataRecieved){
-        BLEDeviceManager.getInstance().setOnRecievedDataListener(onBluetoothDeviceDataRecieved);
+    public void setOnBluetoothDeviceDataReceived(BLEDeviceManager.OnReceivedDataListener onBluetoothDeviceDataReceived){
+        BLEDeviceManager.getInstance().setOnReceivedDataListener(onBluetoothDeviceDataReceived);
     }
 
 
