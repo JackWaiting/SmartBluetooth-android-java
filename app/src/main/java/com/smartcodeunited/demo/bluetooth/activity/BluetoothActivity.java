@@ -112,35 +112,5 @@ public abstract class BluetoothActivity extends BaseActivity implements View.OnC
 
     }
 
-    /**
-     * send commands to device
-     *
-     */
-    public void sendData(BluetoothGatt bluetoothGatt,
-                         String qppData){
-        if(blzMan != null){
-            blzMan.sendData(bluetoothGatt,qppData);
-        }
-    }
-
-    /**
-     * send commands to device
-     *
-     */
-    public void sendData(BluetoothGatt bluetoothGatt, byte[] bytes){
-        if(blzMan != null){
-            blzMan.sendData(bluetoothGatt,bytes);
-        }
-    }
-
-    /**
-     * send commands to device for test
-     *
-     */
-    public void sendDebugData(byte[] debugData){
-        if(blzMan != null){
-            blzMan.sendDebugData(debugData);
-        }
-    }
 
 }

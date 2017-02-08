@@ -518,7 +518,6 @@ public class BLEDeviceManager {
 
                         mBluetoothDevicesFound.add(device);
                         sOnDiscoveryBLEListener.onBluetoothDeviceBluetoothScanBLEReceived(device, rssi, scanRecord);
-
                     }
                 }
 

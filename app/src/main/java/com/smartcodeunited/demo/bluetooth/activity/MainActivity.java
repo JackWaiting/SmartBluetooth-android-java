@@ -18,7 +18,7 @@ package com.smartcodeunited.demo.bluetooth.activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattService;
-import android.util.Log;
+import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -52,18 +52,11 @@ public class MainActivity extends BluetoothActivity implements View.OnClickListe
     public void connectCallback(BluetoothGatt mBluetoothGatt, int state) {
 
         if(mBluetoothGatt != null){
-            bluetoothGattServices = mBluetoothGatt.getServices();
-            Log.i("bluetoothGattServices",mBluetoothGatt.getDevice().getName()+ "   bluetoothGattServices:" + state +"getServices size=" + bluetoothGattServices.size());
-            for (int i = 0 ; i <bluetoothGattServices.size(); i ++){
-                //Log.i("bluetoothGattServices",bluetoothGattServices.get(i).getUuid()+"");
-                //Log.i("bluetoothGattServices",bluetoothGattServices.get(i).getCharacteristics().get(i).getUuid()+"");
-            }
-            /*if(state == 2){
+           if(state == 2){
                 Intent intent = new Intent(this,DeviceUUIDActivity.class);
-                intent.putExtra("mBluetoothGatt",mBluetoothGatt.getDevice());
-                //intent.putExtra("mBluetoothGattService",  );
+                intent.putExtra("mBluetoothGattName",mBluetoothGatt.getDevice().getName());
                 startActivity(intent);
-            }*/
+            }
         }
 
     }

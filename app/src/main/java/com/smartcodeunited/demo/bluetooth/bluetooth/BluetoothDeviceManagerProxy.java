@@ -139,24 +139,26 @@ public class BluetoothDeviceManagerProxy  {
         bluzDeviceMan.startScan();
     }
 
-    public void sendData(BluetoothGatt bluetoothGatt,
-                         String qppData){
+    /**
+     * send commands to device for test
+     *
+     */
+    public void sendDebugData(String debugData){
         if(bluzDeviceMan != null){
-            bluzDeviceMan.sendData(bluetoothGatt,qppData);
+            bluzDeviceMan.sendDebugData(debugData);
         }
     }
 
-    public void sendData(BluetoothGatt bluetoothGatt, byte[] bytes){
-        if(bluzDeviceMan != null){
-            bluzDeviceMan.sendData(bluetoothGatt,bytes);
-        }
-    }
-
+    /**
+     * send commands to device for test
+     *
+     */
     public void sendDebugData(byte[] debugData){
         if(bluzDeviceMan != null){
             bluzDeviceMan.sendDebugData(debugData);
         }
     }
+
 
     /**
      * Stop scan bluetooth devices
