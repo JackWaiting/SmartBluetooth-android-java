@@ -17,6 +17,7 @@ package com.smartcodeunited.demo.bluetooth.activity;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -87,6 +88,11 @@ public abstract class BluetoothActivity extends BaseActivity implements View.OnC
             Log.i(TAG,"bluetoothDeviceName= "+ bluetoothDevice.getName() +"       bluetoothDeviceAddress="+bluetoothDevice.getAddress());
             mListBluetoothDevices.add(bluetoothDevice);
             scanCallback(mListBluetoothDevices);
+
+        }
+
+        @Override
+        public void onBluetoothDeviceBLEServicesDiscovered(String UUIDService, BluetoothGattCharacteristic gattCharacteristic) {
 
         }
     };

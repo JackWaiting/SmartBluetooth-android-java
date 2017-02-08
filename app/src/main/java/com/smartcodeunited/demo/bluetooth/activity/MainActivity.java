@@ -55,8 +55,8 @@ public class MainActivity extends BluetoothActivity implements View.OnClickListe
             bluetoothGattServices = mBluetoothGatt.getServices();
             Log.i("bluetoothGattServices",mBluetoothGatt.getDevice().getName()+ "   bluetoothGattServices:" + state +"getServices size=" + bluetoothGattServices.size());
             for (int i = 0 ; i <bluetoothGattServices.size(); i ++){
-                Log.i("bluetoothGattServices",bluetoothGattServices.get(i).getUuid()+"");
-                Log.i("bluetoothGattServices",bluetoothGattServices.get(i).getCharacteristics().get(i).getUuid()+"");
+                //Log.i("bluetoothGattServices",bluetoothGattServices.get(i).getUuid()+"");
+                //Log.i("bluetoothGattServices",bluetoothGattServices.get(i).getCharacteristics().get(i).getUuid()+"");
             }
             /*if(state == 2){
                 Intent intent = new Intent(this,DeviceUUIDActivity.class);

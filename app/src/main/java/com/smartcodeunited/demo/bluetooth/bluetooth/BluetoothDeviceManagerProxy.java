@@ -17,6 +17,7 @@ package com.smartcodeunited.demo.bluetooth.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 import android.util.Log;
 
@@ -263,6 +264,14 @@ public class BluetoothDeviceManagerProxy  {
                 if (onBluetoothDeviceDiscoveryListener != null) {
                     onBluetoothDeviceDiscoveryListener.onBluetoothDeviceBluetoothScanBLEReceived(bluetoothDevice,rssi,scanRecord);
                 }
+            }
+        }
+
+        @Override
+        public void onBluetoothDeviceBLEServicesDiscovered(String UUIDService, BluetoothGattCharacteristic gattCharacteristic) {
+            Log.i("bluetoothGattServices",UUIDService+ "   BluetoothGattCharacteristic:" + gattCharacteristic.getUuid());
+            if (onBluetoothDeviceDiscoveryListener != null) {
+                onBluetoothDeviceDiscoveryListener.onBluetoothDeviceBLEServicesDiscovered(UUIDService,gattCharacteristic);
             }
         }
     };

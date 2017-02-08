@@ -31,6 +31,5 @@ public class DeviceUUIDActivity extends BaseActivity {
 
     @Override
     protected void initUI() {
-
     }
 }
