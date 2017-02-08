@@ -20,6 +20,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Handler;
+import android.view.View;
 
 import com.smartcodeunited.lib.bluetooth.commands.CommandProtocol;
 
@@ -167,6 +168,12 @@ public final class BluetoothDeviceManager
     public void setOnBluetoothDeviceBluetoothStatusListener(BLEDeviceManager.OnConnectionBLEListener onConnectionListener)
     {
 
+        View.OnLayoutChangeListener layoutChangeListener=new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+
+            }
+        };
         BLEDeviceManager.getInstance().setOnConnectionListener(onConnectionListener);
     }
 
