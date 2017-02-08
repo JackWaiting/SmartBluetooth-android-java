@@ -356,7 +356,6 @@ public class BLEDeviceManager {
             Log.e(TAG, "BluetoothAdapter not initialized !");
             return false;
         }
-
         if (qppData == null) {
             Log.e(TAG, "qppData = null !");
             return false;
@@ -469,5 +468,4 @@ public class BLEDeviceManager {
     public void sendDebugData(byte[] testByte) {
         sendData(mBluetoothGatt,testByte);
     }
-
 }

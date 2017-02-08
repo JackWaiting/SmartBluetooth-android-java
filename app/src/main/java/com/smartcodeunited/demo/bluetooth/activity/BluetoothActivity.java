@@ -33,7 +33,7 @@ public abstract class BluetoothActivity extends BaseActivity implements View.OnC
 
     private List<BluetoothDevice> mListBluetoothDevices = new ArrayList<>(); //New search list of bluetooth
     public abstract void scanCallback(List<BluetoothDevice> mListBluetoothDevices);
-
+    public abstract void connectCallback(BluetoothGatt mBluetoothGatt, int state);
     public List<BluetoothDevice> getBluetoothDeviceList(){
         return mListBluetoothDevices;
     }
@@ -41,7 +41,6 @@ public abstract class BluetoothActivity extends BaseActivity implements View.OnC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("我走了這裡","走了");
         initBluetoothManager();
 
     }
@@ -62,7 +61,7 @@ public abstract class BluetoothActivity extends BaseActivity implements View.OnC
     private BLEDeviceManager.OnConnectionBLEListener onConnectionBLEListener = new BLEDeviceManager.OnConnectionBLEListener() {
         @Override
         public void onConnectionStateChanged(BluetoothGatt mBluetoothGatt, int state) {
-
+            connectCallback(mBluetoothGatt,state);
         }
     };
 

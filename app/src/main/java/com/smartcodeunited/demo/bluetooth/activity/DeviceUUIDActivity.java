@@ -15,16 +15,22 @@
  */
 package com.smartcodeunited.demo.bluetooth.activity;
 
-import android.app.Activity;
-import android.os.Bundle;
-
 import com.smartcodeunited.demo.bluetooth.R;
 
-public class DeviceUUIDActivity extends Activity {
+public class DeviceUUIDActivity extends BaseActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_uuid);
+    protected int getContentLayoutId() {
+        return R.layout.activity_device_uuid;
+    }
+
+    @Override
+    protected void initBase() {
+
+    }
+
+    @Override
+    protected void initUI() {
+
     }
 }

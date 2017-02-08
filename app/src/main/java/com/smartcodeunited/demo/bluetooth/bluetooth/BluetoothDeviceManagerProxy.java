@@ -137,11 +137,18 @@ public class BluetoothDeviceManagerProxy  {
     }
 
     /**
+     * Stop scan bluetooth devices
+     */
+    public void stopScanning() {
+        bluzDeviceMan.stopScan();
+    }
+
+    /**
      * Disconnected bluetooth
      */
     public void disconnected() {
         if (bluzDeviceMan != null && connected) {
-            bluzDeviceMan.disconnect(connectedDevice);
+            bluzDeviceMan.disconnect();
         }
     }
 
@@ -156,6 +163,8 @@ public class BluetoothDeviceManagerProxy  {
         connecting = true;
         bluzDeviceMan = getBluetoothDeviceManager();
         Log.i("connectDevice", "connectDevice+else");
+        stopScanning();
+        disconnected();
         bluzDeviceMan.connect(device);
         return false;
     }
