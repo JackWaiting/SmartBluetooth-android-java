@@ -50,8 +50,22 @@ public abstract class BluetoothActivity extends BaseActivity implements View.OnC
         blzMan = BluetoothDeviceManagerProxy
                 .getInstance(getApplicationContext());
         blzMan.setScanningListener(onDiscoveryBLEListener);
+        blzMan.setDiscoveryServiceBLEListener(onServiceBLEListener);
+        blzMan.setReceivedDataListener(onReceivedDataListener);
         blzMan.addOnBluetoothDeviceConnectionStateChangedListener(onConnectionBLEListener);
     }
+
+    private BLEDeviceManager.OnReceivedDataListener onReceivedDataListener = new BLEDeviceManager.OnReceivedDataListener() {
+        @Override
+        public void onRecivedData(byte[] data) {
+        }
+    };
+
+    private BLEDeviceManager.OnDiscoveryServiceBLEListener onServiceBLEListener = new BLEDeviceManager.OnDiscoveryServiceBLEListener() {
+        @Override
+        public void onDiscoveryServiceChar(String UUIDService, BluetoothGattCharacteristic gattCharacteristic) {
+        }
+    };
 
     public void connectDevice(BluetoothDevice bluetoothDevice){
         if(blzMan != null){
@@ -91,14 +105,42 @@ public abstract class BluetoothActivity extends BaseActivity implements View.OnC
 
         }
 
-        @Override
-        public void onBluetoothDeviceBLEServicesDiscovered(String UUIDService, BluetoothGattCharacteristic gattCharacteristic) {
-
-        }
     };
 
     @Override
     public void onClick(View v) {
 
     }
+
+    /**
+     * send commands to device
+     *
+     */
+    public void sendData(BluetoothGatt bluetoothGatt,
+                         String qppData){
+        if(blzMan != null){
+            blzMan.sendData(bluetoothGatt,qppData);
+        }
+    }
+
+    /**
+     * send commands to device
+     *
+     */
+    public void sendData(BluetoothGatt bluetoothGatt, byte[] bytes){
+        if(blzMan != null){
+            blzMan.sendData(bluetoothGatt,bytes);
+        }
+    }
+
+    /**
+     * send commands to device for test
+     *
+     */
+    public void sendDebugData(byte[] debugData){
+        if(blzMan != null){
+            blzMan.sendDebugData(debugData);
+        }
+    }
+
 }

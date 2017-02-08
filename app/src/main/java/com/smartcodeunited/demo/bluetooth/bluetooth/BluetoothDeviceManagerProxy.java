@@ -96,6 +96,8 @@ public class BluetoothDeviceManagerProxy  {
             bluzManReady = false;
             bluzDeviceMan = BluetoothDeviceManager.getInstance(context);
             bluzDeviceMan.setDeviceType(BluetoothDeviceManager.BluetoothType.BLE);
+            bluzDeviceMan.setOnDiscoveryServiceBLEListener(onServiceBLEListener);
+            bluzDeviceMan.setOnBluetoothDeviceDataReceived(onReceivedDataListener);
             bluzDeviceMan.setOnBluetoothDeviceBluetoothStatusListener(onConnectionBLEListener);
         }
         return bluzDeviceMan;
@@ -135,6 +137,25 @@ public class BluetoothDeviceManagerProxy  {
         bluzDeviceMan = getBluetoothDeviceManager();
         bluzDeviceMan.setOnBluetoothDeviceBluetoothScanningListener(onScanBLEListener);
         bluzDeviceMan.startScan();
+    }
+
+    public void sendData(BluetoothGatt bluetoothGatt,
+                         String qppData){
+        if(bluzDeviceMan != null){
+            bluzDeviceMan.sendData(bluetoothGatt,qppData);
+        }
+    }
+
+    public void sendData(BluetoothGatt bluetoothGatt, byte[] bytes){
+        if(bluzDeviceMan != null){
+            bluzDeviceMan.sendData(bluetoothGatt,bytes);
+        }
+    }
+
+    public void sendDebugData(byte[] debugData){
+        if(bluzDeviceMan != null){
+            bluzDeviceMan.sendDebugData(debugData);
+        }
     }
 
     /**
@@ -193,6 +214,39 @@ public class BluetoothDeviceManagerProxy  {
         }
     }
 
+    private BLEDeviceManager.OnReceivedDataListener onBluetoothDeviceReceivedDataListener;
+
+    public void setReceivedDataListener(
+            BLEDeviceManager.OnReceivedDataListener discoveryListener) {
+        this.onBluetoothDeviceReceivedDataListener = discoveryListener;
+    }
+
+    private BLEDeviceManager.OnReceivedDataListener onReceivedDataListener = new BLEDeviceManager.OnReceivedDataListener() {
+        @Override
+        public void onRecivedData(byte[] data) {
+            if(onBluetoothDeviceReceivedDataListener != null){
+                onBluetoothDeviceReceivedDataListener.onRecivedData(data);
+            }
+        }
+    };
+
+    private BLEDeviceManager.OnDiscoveryServiceBLEListener onBluetoothDeviceDiscoveryServiceBLEListener;
+
+    public void setDiscoveryServiceBLEListener(
+            BLEDeviceManager.OnDiscoveryServiceBLEListener discoveryListener) {
+        this.onBluetoothDeviceDiscoveryServiceBLEListener = discoveryListener;
+    }
+
+
+    private BLEDeviceManager.OnDiscoveryServiceBLEListener onServiceBLEListener = new BLEDeviceManager.OnDiscoveryServiceBLEListener() {
+        @Override
+        public void onDiscoveryServiceChar(String UUIDService, BluetoothGattCharacteristic gattCharacteristic) {
+            if(onBluetoothDeviceDiscoveryServiceBLEListener != null){
+                onBluetoothDeviceDiscoveryServiceBLEListener.onDiscoveryServiceChar(UUIDService , gattCharacteristic);
+            }
+        }
+    };
+
     private BLEDeviceManager.OnConnectionBLEListener onConnectionBLEListener = new BLEDeviceManager.OnConnectionBLEListener() {
         @Override
         public void onConnectionStateChanged(BluetoothGatt mBluetoothGatt, int state) {
@@ -224,6 +278,8 @@ public class BluetoothDeviceManagerProxy  {
             conStateListener.get(i).onConnectionStateChanged( mBluetoothGatt, state);
         }
     }
+
+
 
     private BLEDeviceManager.OnDiscoveryBLEListener onScanBLEListener = new BLEDeviceManager.OnDiscoveryBLEListener() {
         @Override
@@ -267,13 +323,6 @@ public class BluetoothDeviceManagerProxy  {
             }
         }
 
-        @Override
-        public void onBluetoothDeviceBLEServicesDiscovered(String UUIDService, BluetoothGattCharacteristic gattCharacteristic) {
-            Log.i("bluetoothGattServices",UUIDService+ "   BluetoothGattCharacteristic:" + gattCharacteristic.getUuid());
-            if (onBluetoothDeviceDiscoveryListener != null) {
-                onBluetoothDeviceDiscoveryListener.onBluetoothDeviceBLEServicesDiscovered(UUIDService,gattCharacteristic);
-            }
-        }
     };
 
     /**
@@ -285,6 +334,7 @@ public class BluetoothDeviceManagerProxy  {
         bluzManReady = false;
         proxy = null;
         onBluetoothDeviceDiscoveryListener = null;
+        onBluetoothDeviceDiscoveryServiceBLEListener = null;
         if (bluzDeviceMan != null) {
             if (bluzDeviceMan.isScanning()) {
                 bluzDeviceMan.stopScan();
