@@ -197,14 +197,15 @@ public class BLEDeviceManager {
                         .getCharacteristics();
                 for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
                     int charaProp = gattCharacteristic.getProperties();
-                    if ((charaProp | BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) {
+//                    if ((charaProp | BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) {
                         if (sOnDiscoveryServiceBLEListener != null)
                             sOnDiscoveryServiceBLEListener.onDiscoveryServiceChar(service.getUuid().toString(), gattCharacteristic);
                         Log.e(TAG, "gattCharacteristic UUID-->" + gattCharacteristic.getUuid());
+
                         if (!isServicesDiscovered){
                             isServicesDiscovered = setEnable(gatt, service.getUuid().toString(), gattCharacteristic.getUuid().toString());
                         }
-                    }
+//                    }
                 }
             }
 
@@ -390,6 +391,7 @@ public class BLEDeviceManager {
             Log.e(TAG, "BluetoothAdapter not initialized !");
             return false;
         }
+
         if (qppData == null) {
             Log.e(TAG, "qppData = null !");
             return false;
@@ -533,4 +535,15 @@ public class BLEDeviceManager {
     public void sendDebugData(byte[] testByte) {
         sendData(mBluetoothGatt, testByte);
     }
+
+    /**
+     * send commands to device for test
+     *
+     * @param testStrings
+     */
+    public void sendDebugData(String testStrings) {
+        sendData(mBluetoothGatt, testStrings);
+    }
+
+
 }
