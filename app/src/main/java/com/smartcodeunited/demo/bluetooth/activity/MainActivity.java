@@ -50,7 +50,6 @@ public class MainActivity extends BluetoothActivity implements View.OnClickListe
 
     @Override
     public void connectCallback(BluetoothGatt mBluetoothGatt, int state) {
-
         if(mBluetoothGatt != null){
            if(state == 2){
                 Intent intent = new Intent(this,DeviceUUIDActivity.class);
@@ -58,7 +57,6 @@ public class MainActivity extends BluetoothActivity implements View.OnClickListe
                 startActivity(intent);
             }
         }
-
     }
 
     @Override
