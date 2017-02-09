@@ -293,7 +293,7 @@ public class BLEDeviceManager {
             }
         }
 
-        if (!setCharacteristicNotification(bluetoothGatt, arrayNtfCharList.get(0), true))
+        if (arrayNtfCharList.size()>0&&!setCharacteristicNotification(bluetoothGatt, arrayNtfCharList.get(0), true))
             return false;
         notifyCharaIndex++;
 
