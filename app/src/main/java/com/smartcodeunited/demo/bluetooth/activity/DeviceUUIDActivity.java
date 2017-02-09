@@ -15,18 +15,24 @@
  */
 package com.smartcodeunited.demo.bluetooth.activity;
 
-import android.bluetooth.BluetoothGattCharacteristic;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.smartcodeunited.demo.bluetooth.R;
 import com.smartcodeunited.demo.bluetooth.bluetooth.BluetoothDeviceManagerProxy;
 import com.smartcodeunited.lib.bluetooth.managers.BLEDeviceManager;
 
-public class DeviceUUIDActivity extends BaseActivity {
+public class DeviceUUIDActivity extends BaseActivity implements View.OnClickListener {
 
     private BluetoothDeviceManagerProxy blzMan;
     private String mStrBluetoothGattName;
     private TextView tvServiceUUID,tvCharacteristicUUID;
+    private String strUUIDService;
+    private String strUUIDCharacteristic;
+    private TextView tvReceivedData,btnSend;
+    private EditText ediWriteData;
 
     @Override
     protected int getContentLayoutId() {
@@ -36,7 +42,9 @@ public class DeviceUUIDActivity extends BaseActivity {
     @Override
     protected void initBase() {
         initBluetoothManager();
-        mStrBluetoothGattName = getIntent().getExtras().getString("mStrBluetoothGattName");
+        mStrBluetoothGattName = getIntent().getExtras().getString("mBluetoothGattName");
+        strUUIDService = getIntent().getExtras().getString("strUUIDService");
+        strUUIDCharacteristic = getIntent().getExtras().getString("strUUIDCharacteristic");
     }
 
     @Override
@@ -46,17 +54,39 @@ public class DeviceUUIDActivity extends BaseActivity {
 
         tvServiceUUID = (TextView) findViewById(R.id.tv_service_uuid);
         tvCharacteristicUUID = (TextView) findViewById(R.id.tv_characteristic_uuid);
+        tvReceivedData = (TextView) findViewById(R.id.tv_received_data);
+        ediWriteData = (EditText) findViewById(R.id.edi_write_data);
+        btnSend = (TextView) findViewById(R.id.btn_send);
+
+        tvServiceUUID.setText(strUUIDService);
+        tvCharacteristicUUID.setText(strUUIDCharacteristic);
+        btnSend.setOnClickListener(this);
+
     }
 
     private void initBluetoothManager() {
         blzMan = BluetoothDeviceManagerProxy
-                .getInstance(getApplicationContext());
-        blzMan.setDiscoveryServiceBLEListener(onServiceBLEListener);
+                .getInstance(this);
+        blzMan.setReceivedDataListener(onReceivedDataListenerer);
     }
 
-    private BLEDeviceManager.OnDiscoveryServiceBLEListener onServiceBLEListener = new BLEDeviceManager.OnDiscoveryServiceBLEListener() {
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()){
+            case R.id.btn_send:
+                blzMan.sendDebugData(ediWriteData.getText().toString());
+                break;
+        }
+    }
+
+    private BLEDeviceManager.OnReceivedDataListener onReceivedDataListenerer = new BLEDeviceManager.OnReceivedDataListener() {
         @Override
-        public void onDiscoveryServiceChar(String UUIDService, BluetoothGattCharacteristic gattCharacteristic) {
+        public void onRecivedData(byte[] data) {
+            for (int i = 0; i < data.length; i ++){
+                Log.i("onRecivedData","data = " + data[i]);
+            }
         }
     };
+
 }
