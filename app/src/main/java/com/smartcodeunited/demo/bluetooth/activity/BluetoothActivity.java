@@ -17,7 +17,6 @@ package com.smartcodeunited.demo.bluetooth.activity;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -50,7 +49,6 @@ public abstract class BluetoothActivity extends BaseActivity implements View.OnC
         blzMan = BluetoothDeviceManagerProxy
                 .getInstance(getApplicationContext());
         blzMan.setScanningListener(onDiscoveryBLEListener);
-        blzMan.setDiscoveryServiceBLEListener(onServiceBLEListener);
         blzMan.setReceivedDataListener(onReceivedDataListener);
         blzMan.addOnBluetoothDeviceConnectionStateChangedListener(onConnectionBLEListener);
     }
@@ -61,11 +59,7 @@ public abstract class BluetoothActivity extends BaseActivity implements View.OnC
         }
     };
 
-    private BLEDeviceManager.OnDiscoveryServiceBLEListener onServiceBLEListener = new BLEDeviceManager.OnDiscoveryServiceBLEListener() {
-        @Override
-        public void onDiscoveryServiceChar(String UUIDService, BluetoothGattCharacteristic gattCharacteristic) {
-        }
-    };
+
 
     public void connectDevice(BluetoothDevice bluetoothDevice){
         if(blzMan != null){

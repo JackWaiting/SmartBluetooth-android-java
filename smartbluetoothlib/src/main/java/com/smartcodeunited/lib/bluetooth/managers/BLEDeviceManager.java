@@ -138,7 +138,7 @@ public class BLEDeviceManager {
     private static OnDiscoveryBLEListener sOnDiscoveryBLEListener;
 
     public interface OnDiscoveryServiceBLEListener {
-        public void onDiscoveryServiceChar(String UUIDService, BluetoothGattCharacteristic gattCharacteristic);
+        void onDiscoveryServiceChar(String UUIDService, BluetoothGattCharacteristic gattCharacteristic);
     }
 
     private static OnDiscoveryServiceBLEListener sOnDiscoveryServiceBLEListener;
@@ -200,10 +200,10 @@ public class BLEDeviceManager {
                 for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
                     int charaProp = gattCharacteristic.getProperties();
 //                    if ((charaProp | BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) {
-                    if (sOnDiscoveryServiceBLEListener != null)
+                    if (sOnDiscoveryServiceBLEListener != null) {
                         sOnDiscoveryServiceBLEListener.onDiscoveryServiceChar(service.getUuid().toString(), gattCharacteristic);
-                    Log.e(TAG, "gattCharacteristic UUID-->" + gattCharacteristic.getUuid());
-
+                        Log.e(TAG, "gattCharacteristic UUID-->" + gattCharacteristic.getUuid());
+                    }
                     if (!isServicesDiscovered) {
                         isServicesDiscovered = setEnable(gatt, service.getUuid().toString(), gattCharacteristic.getUuid().toString());
                     }
@@ -230,7 +230,6 @@ public class BLEDeviceManager {
             super.onCharacteristicWrite(gatt, characteristic, status);
 //            Log.e(TAG, status==BluetoothGatt.GATT_SUCCESS?"Send success!!":"Send failed!!");
             Log.d(TAG, status + "--" + Arrays.toString(characteristic.getValue()));
-
         }
 
         /**
@@ -293,7 +292,7 @@ public class BLEDeviceManager {
             }
         }
 
-        if (!setCharacteristicNotification(bluetoothGatt, arrayNtfCharList.get(0), true))
+        if (arrayNtfCharList.size()>0 && !setCharacteristicNotification(bluetoothGatt, arrayNtfCharList.get(0), true))
             return false;
         notifyCharaIndex++;
 

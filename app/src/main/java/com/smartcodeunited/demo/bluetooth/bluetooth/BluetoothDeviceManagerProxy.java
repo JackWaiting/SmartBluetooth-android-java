@@ -239,10 +239,10 @@ public class BluetoothDeviceManagerProxy  {
         this.onBluetoothDeviceDiscoveryServiceBLEListener = discoveryListener;
     }
 
-
     private BLEDeviceManager.OnDiscoveryServiceBLEListener onServiceBLEListener = new BLEDeviceManager.OnDiscoveryServiceBLEListener() {
         @Override
         public void onDiscoveryServiceChar(String UUIDService, BluetoothGattCharacteristic gattCharacteristic) {
+            Log.i("onDiscoveryServiceChar","ServiceUUID=" + UUIDService + "gattCharacteristic=" + gattCharacteristic.getUuid());
             if(onBluetoothDeviceDiscoveryServiceBLEListener != null){
                 onBluetoothDeviceDiscoveryServiceBLEListener.onDiscoveryServiceChar(UUIDService , gattCharacteristic);
             }
