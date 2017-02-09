@@ -15,16 +15,48 @@
  */
 package com.smartcodeunited.demo.bluetooth.activity;
 
-import android.app.Activity;
-import android.os.Bundle;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.widget.TextView;
 
 import com.smartcodeunited.demo.bluetooth.R;
+import com.smartcodeunited.demo.bluetooth.bluetooth.BluetoothDeviceManagerProxy;
+import com.smartcodeunited.lib.bluetooth.managers.BLEDeviceManager;
 
-public class DeviceUUIDActivity extends Activity {
+public class DeviceUUIDActivity extends BaseActivity {
+
+    private BluetoothDeviceManagerProxy blzMan;
+    private String mStrBluetoothGattName;
+    private TextView tvServiceUUID,tvCharacteristicUUID;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_uuid);
+    protected int getContentLayoutId() {
+        return R.layout.activity_device_uuid;
     }
+
+    @Override
+    protected void initBase() {
+        initBluetoothManager();
+        mStrBluetoothGattName = getIntent().getExtras().getString("mStrBluetoothGattName");
+    }
+
+    @Override
+    protected void initUI() {
+        setTitleText(mStrBluetoothGattName);
+        setLeftBtn(R.string.back,0);
+
+        tvServiceUUID = (TextView) findViewById(R.id.tv_service_uuid);
+        tvCharacteristicUUID = (TextView) findViewById(R.id.tv_characteristic_uuid);
+    }
+
+    private void initBluetoothManager() {
+        blzMan = BluetoothDeviceManagerProxy
+                .getInstance(getApplicationContext());
+        blzMan.setDiscoveryServiceBLEListener(onServiceBLEListener);
+    }
+
+    private BLEDeviceManager.OnDiscoveryServiceBLEListener onServiceBLEListener = new BLEDeviceManager.OnDiscoveryServiceBLEListener() {
+        @Override
+        public void onDiscoveryServiceChar(String UUIDService, BluetoothGattCharacteristic gattCharacteristic) {
+        }
+    };
 }
