@@ -17,6 +17,7 @@ package com.smartcodeunited.demo.bluetooth.activity;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,7 +34,7 @@ public abstract class BluetoothActivity extends BaseActivity implements View.OnC
 
     private List<BluetoothDevice> mListBluetoothDevices = new ArrayList<>(); //New search list of bluetooth
     public abstract void scanCallback(List<BluetoothDevice> mListBluetoothDevices);
-
+    public abstract void connectCallback(BluetoothGatt mBluetoothGatt, int state);
     public List<BluetoothDevice> getBluetoothDeviceList(){
         return mListBluetoothDevices;
     }
@@ -41,7 +42,6 @@ public abstract class BluetoothActivity extends BaseActivity implements View.OnC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("我走了這裡","走了");
         initBluetoothManager();
 
     }
@@ -50,8 +50,22 @@ public abstract class BluetoothActivity extends BaseActivity implements View.OnC
         blzMan = BluetoothDeviceManagerProxy
                 .getInstance(getApplicationContext());
         blzMan.setScanningListener(onDiscoveryBLEListener);
+        blzMan.setDiscoveryServiceBLEListener(onServiceBLEListener);
+        blzMan.setReceivedDataListener(onReceivedDataListener);
         blzMan.addOnBluetoothDeviceConnectionStateChangedListener(onConnectionBLEListener);
     }
+
+    private BLEDeviceManager.OnReceivedDataListener onReceivedDataListener = new BLEDeviceManager.OnReceivedDataListener() {
+        @Override
+        public void onRecivedData(byte[] data) {
+        }
+    };
+
+    private BLEDeviceManager.OnDiscoveryServiceBLEListener onServiceBLEListener = new BLEDeviceManager.OnDiscoveryServiceBLEListener() {
+        @Override
+        public void onDiscoveryServiceChar(String UUIDService, BluetoothGattCharacteristic gattCharacteristic) {
+        }
+    };
 
     public void connectDevice(BluetoothDevice bluetoothDevice){
         if(blzMan != null){
@@ -62,7 +76,7 @@ public abstract class BluetoothActivity extends BaseActivity implements View.OnC
     private BLEDeviceManager.OnConnectionBLEListener onConnectionBLEListener = new BLEDeviceManager.OnConnectionBLEListener() {
         @Override
         public void onConnectionStateChanged(BluetoothGatt mBluetoothGatt, int state) {
-
+            connectCallback(mBluetoothGatt,state);
         }
     };
 
@@ -90,10 +104,13 @@ public abstract class BluetoothActivity extends BaseActivity implements View.OnC
             scanCallback(mListBluetoothDevices);
 
         }
+
     };
 
     @Override
     public void onClick(View v) {
 
     }
+
+
 }

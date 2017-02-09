@@ -512,12 +512,14 @@ public class BLEDeviceManager {
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
+
             if (sOnDiscoveryBLEListener != null) {
                 if (filterRepeatDevice(device))
                     sOnDiscoveryBLEListener.onBluetoothDeviceBluetoothScanBLEReceived(device, rssi, scanRecord);
             }
         }
     };
+
 
     private boolean filterRepeatDevice(BluetoothDevice device) {
         for (BluetoothDevice bluetoothDevice : mBluetoothDevicesFound) {
