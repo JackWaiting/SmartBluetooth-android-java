@@ -36,7 +36,7 @@ public class DeviceUUIDActivity extends BaseActivity {
     @Override
     protected void initBase() {
         initBluetoothManager();
-        mStrBluetoothGattName = getIntent().getExtras().getString("mStrBluetoothGattName");
+        mStrBluetoothGattName = getIntent().getExtras().getString("mBluetoothGattName");
     }
 
     @Override
@@ -57,6 +57,8 @@ public class DeviceUUIDActivity extends BaseActivity {
     private BLEDeviceManager.OnDiscoveryServiceBLEListener onServiceBLEListener = new BLEDeviceManager.OnDiscoveryServiceBLEListener() {
         @Override
         public void onDiscoveryServiceChar(String UUIDService, BluetoothGattCharacteristic gattCharacteristic) {
+            tvServiceUUID.setText(UUIDService);
+            tvCharacteristicUUID.setText(gattCharacteristic.getUuid()+"");
         }
     };
 }
