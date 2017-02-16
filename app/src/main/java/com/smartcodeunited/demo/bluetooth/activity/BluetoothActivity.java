@@ -15,8 +15,8 @@
  */
 package com.smartcodeunited.demo.bluetooth.activity;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,28 +27,52 @@ import com.smartcodeunited.lib.bluetooth.managers.BLEDeviceManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BluetoothActivity extends Activity implements View.OnClickListener {
+public abstract class BluetoothActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "BluetoothActivity";
-    BluetoothDeviceManagerProxy blzMan;
+    private BluetoothDeviceManagerProxy blzMan;
 
-    private List<BluetoothDevice> mListBluetoothDevices = new ArrayList<BluetoothDevice>(); //New search list of bluetooth
+    private List<BluetoothDevice> mListBluetoothDevices = new ArrayList<>(); //New search list of bluetooth
     public abstract void scanCallback(List<BluetoothDevice> mListBluetoothDevices);
-
+    public abstract void connectCallback(BluetoothGatt mBluetoothGatt, int state);
     public List<BluetoothDevice> getBluetoothDeviceList(){
         return mListBluetoothDevices;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initBluetoothManager();
+
     }
 
     private void initBluetoothManager() {
         blzMan = BluetoothDeviceManagerProxy
                 .getInstance(getApplicationContext());
         blzMan.setScanningListener(onDiscoveryBLEListener);
+        blzMan.setReceivedDataListener(onReceivedDataListener);
+        blzMan.addOnBluetoothDeviceConnectionStateChangedListener(onConnectionBLEListener);
     }
+
+    private BLEDeviceManager.OnReceivedDataListener onReceivedDataListener = new BLEDeviceManager.OnReceivedDataListener() {
+        @Override
+        public void onRecivedData(byte[] data) {
+        }
+    };
+
+
+
+    public void connectDevice(BluetoothDevice bluetoothDevice){
+        if(blzMan != null){
+            blzMan.connectDevice(bluetoothDevice);
+        }
+    }
+
+    private BLEDeviceManager.OnConnectionBLEListener onConnectionBLEListener = new BLEDeviceManager.OnConnectionBLEListener() {
+        @Override
+        public void onConnectionStateChanged(BluetoothGatt mBluetoothGatt, int state) {
+            connectCallback(mBluetoothGatt,state);
+        }
+    };
 
     private BLEDeviceManager.OnDiscoveryBLEListener onDiscoveryBLEListener = new BLEDeviceManager.OnDiscoveryBLEListener() {
         @Override
@@ -74,10 +98,13 @@ public abstract class BluetoothActivity extends Activity implements View.OnClick
             scanCallback(mListBluetoothDevices);
 
         }
+
     };
 
     @Override
     public void onClick(View v) {
 
     }
+
+
 }

@@ -20,6 +20,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Handler;
+import android.view.View;
 
 import com.smartcodeunited.lib.bluetooth.commands.CommandProtocol;
 
@@ -167,6 +168,12 @@ public final class BluetoothDeviceManager
     public void setOnBluetoothDeviceBluetoothStatusListener(BLEDeviceManager.OnConnectionBLEListener onConnectionListener)
     {
 
+        View.OnLayoutChangeListener layoutChangeListener=new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+
+            }
+        };
         BLEDeviceManager.getInstance().setOnConnectionListener(onConnectionListener);
     }
 
@@ -174,8 +181,16 @@ public final class BluetoothDeviceManager
     {
         BLEDeviceManager.getInstance().setOnDiscoveryBLEListener(onDiscoveryBLEListener);
     }
-    public void setOnBluetoothDeviceDataRecieved(BLEDeviceManager.OnRecievedDataListener onBluetoothDeviceDataRecieved){
-        BLEDeviceManager.getInstance().setOnRecievedDataListener(onBluetoothDeviceDataRecieved);
+
+
+    public void setOnDiscoveryServiceBLEListener(BLEDeviceManager.OnDiscoveryServiceBLEListener onDiscoveryServiceBLEListener)
+    {
+        BLEDeviceManager.getInstance().setOnDiscoveryServiceBLEListener(onDiscoveryServiceBLEListener);
+    }
+
+
+    public void setOnBluetoothDeviceDataReceived(BLEDeviceManager.OnReceivedDataListener onBluetoothDeviceDataReceived){
+        BLEDeviceManager.getInstance().setOnReceivedDataListener(onBluetoothDeviceDataReceived);
     }
 
 
@@ -274,12 +289,15 @@ public final class BluetoothDeviceManager
 
     }
 
-    public void disconnect(BluetoothDevice bluetoothDevice)
+    public void disconnect()
     {
         BLEDeviceManager.getInstance().disConnectBLEDevice();
     }
 
     public void sendDebugData(byte[] debugData){
         BLEDeviceManager.getInstance().sendDebugData(debugData);
+    }
+    public void sendDebugData(String testStrings){
+        BLEDeviceManager.getInstance().sendDebugData(testStrings);
     }
 }

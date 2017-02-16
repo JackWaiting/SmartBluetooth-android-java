@@ -16,14 +16,21 @@
 package com.smartcodeunited.demo.bluetooth.activity;
 
 import android.bluetooth.BluetoothDevice;
-import android.os.Bundle;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
+import android.content.Intent;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.smartcodeunited.demo.bluetooth.R;
 import com.smartcodeunited.demo.bluetooth.adapter.BluetoothAdapter;
 import com.smartcodeunited.demo.bluetooth.bluetooth.BluetoothDeviceManagerProxy;
+import com.smartcodeunited.lib.bluetooth.managers.BLEDeviceManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,26 +39,68 @@ public class MainActivity extends BluetoothActivity implements View.OnClickListe
     private BluetoothAdapter bluetoothAdapter;
     private ListView bluetoothListView;
     private BluetoothDeviceManagerProxy proxy;
-
+    private List<BluetoothDevice> bluetoothDevices = new ArrayList<>();
+    private List<BluetoothGattService> bluetoothGattServices = new ArrayList<>();
+    private String strUUIDService;
+    private String strUUIDCharacteristic;
 
     @Override
     public void scanCallback(List<BluetoothDevice> mListBluetoothDevices) {
 
         if(bluetoothAdapter != null){
-            bluetoothAdapter.setList(getBluetoothDeviceList());
+            bluetoothDevices = mListBluetoothDevices;
+            bluetoothAdapter.setList(mListBluetoothDevices);
         }
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        initBase();
-        initView();
+    public void connectCallback(BluetoothGatt mBluetoothGatt, int state) {
+        if(mBluetoothGatt != null){
+           if(state == 2){
+                Intent intent = new Intent(this,DeviceUUIDActivity.class);
+                intent.putExtra("mBluetoothGattName",mBluetoothGatt.getDevice().getName());
+                intent.putExtra("strUUIDService",strUUIDService);
+                intent.putExtra("strUUIDCharacteristic",strUUIDCharacteristic);
+                startActivity(intent);
+            }
+        }
     }
 
-    private void initBase() {
-        proxy = BluetoothDeviceManagerProxy.getInstance();
+    private BLEDeviceManager.OnDiscoveryServiceBLEListener onServiceBLEListener = new BLEDeviceManager.OnDiscoveryServiceBLEListener() {
+        @Override
+        public void onDiscoveryServiceChar(String UUIDService, BluetoothGattCharacteristic gattCharacteristic) {
+            Log.i("DeviceUUIDActivity","ServiceUUID=" + UUIDService + "gattCharacteristic=" + gattCharacteristic.getUuid());
+            strUUIDService = UUIDService;
+            strUUIDCharacteristic = gattCharacteristic.getUuid() +"";
+        }
+    };
+
+    @Override
+    protected int getContentLayoutId() {
+        return R.layout.activity_main;
+    }
+
+    private void setItemClick() {
+        if(bluetoothListView != null){
+            bluetoothListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if(bluetoothDevices!= null && bluetoothDevices.size() > 0)
+                        connectDevice(bluetoothDevices.get(position));
+                }
+            });
+        }
+    }
+    @Override
+    protected void initBase() {
+        proxy = BluetoothDeviceManagerProxy.getInstance(this);
+        proxy.setDiscoveryServiceBLEListener(onServiceBLEListener);
+    }
+
+    @Override
+    protected void initUI() {
+        initView();
+        setItemClick();
     }
 
     private void initView() {

@@ -102,12 +102,14 @@ public class BLEDeviceManager {
 
     public static boolean isServicesDiscovered;
 
-    public interface OnRecievedDataListener{
+    public interface OnReceivedDataListener {
         public void onRecivedData(byte[] data);
     }
-    private  static OnRecievedDataListener sOnRecievedDataListener;
-    public void setOnRecievedDataListener(OnRecievedDataListener onRecievedDataListener){
-        sOnRecievedDataListener=onRecievedDataListener;
+
+    private static OnReceivedDataListener sOnReceivedDataListener;
+
+    public void setOnReceivedDataListener(OnReceivedDataListener onReceivedDataListener) {
+        sOnReceivedDataListener = onReceivedDataListener;
     }
 
 
@@ -130,9 +132,17 @@ public class BLEDeviceManager {
         public void onBluetoothDeviceBluetoothScanClassicReceived(BluetoothDevice bluetoothDevice);
 
         public void onBluetoothDeviceBluetoothScanBLEReceived(BluetoothDevice bluetoothDevice, int rssi, byte[] scanRecord);
+
     }
 
     private static OnDiscoveryBLEListener sOnDiscoveryBLEListener;
+
+    public interface OnDiscoveryServiceBLEListener {
+        void onDiscoveryServiceChar(String UUIDService, BluetoothGattCharacteristic gattCharacteristic);
+    }
+
+    private static OnDiscoveryServiceBLEListener sOnDiscoveryServiceBLEListener;
+
 
     /**
      * Connection status Listener
@@ -141,12 +151,16 @@ public class BLEDeviceManager {
      */
     public void setOnConnectionListener(OnConnectionBLEListener onConnectionListener) {
         sOnConnectionListener = onConnectionListener;
-        Log.d(TAG, "setOnConnectionListener：" + (sOnConnectionListener == null));
     }
 
     public void setOnDiscoveryBLEListener(OnDiscoveryBLEListener onDiscoveryBLEListener) {
         sOnDiscoveryBLEListener = onDiscoveryBLEListener;
     }
+
+    public void setOnDiscoveryServiceBLEListener(OnDiscoveryServiceBLEListener onDiscoveryServiceBLEListener) {
+        sOnDiscoveryServiceBLEListener = onDiscoveryServiceBLEListener;
+    }
+
 
     public void connectBLEDevice(Context context, BluetoothDevice device) {
         closeGatt();
@@ -170,6 +184,7 @@ public class BLEDeviceManager {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 mBluetoothGatt.discoverServices();//Scanning equipment supported by the service
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                isServicesDiscovered = false;
                 closeGatt();
             }
             sOnConnectionListener.onConnectionStateChanged(gatt, newState);
@@ -178,8 +193,30 @@ public class BLEDeviceManager {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
+            final List<BluetoothGattService> services = gatt.getServices();
+            for (BluetoothGattService service : services) {
+                List<BluetoothGattCharacteristic> gattCharacteristics = service
+                        .getCharacteristics();
+                for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
+                    int charaProp = gattCharacteristic.getProperties();
+//                    if ((charaProp | BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) {
+                    if (sOnDiscoveryServiceBLEListener != null) {
+                        sOnDiscoveryServiceBLEListener.onDiscoveryServiceChar(service.getUuid().toString(), gattCharacteristic);
+                        Log.e(TAG, "gattCharacteristic UUID-->" + gattCharacteristic.getUuid());
+                    }
+                    if (!isServicesDiscovered) {
+                        isServicesDiscovered = setEnable(gatt, service.getUuid().toString(), gattCharacteristic.getUuid().toString());
+                    }
+//                    }
+                }
+            }
 
-            isServicesDiscovered = setEnable(gatt, uuidQppService, uuidQppCharWrite);
+
+        }
+
+        public void setUUID(String uuidService, BluetoothGattCharacteristic gattCharacteristic) {
+            uuidQppService = uuidService;
+            writeCharacteristic = gattCharacteristic;
         }
 
         /**
@@ -193,7 +230,6 @@ public class BLEDeviceManager {
             super.onCharacteristicWrite(gatt, characteristic, status);
 //            Log.e(TAG, status==BluetoothGatt.GATT_SUCCESS?"Send success!!":"Send failed!!");
             Log.d(TAG, status + "--" + Arrays.toString(characteristic.getValue()));
-
         }
 
         /**
@@ -256,7 +292,7 @@ public class BLEDeviceManager {
             }
         }
 
-        if (!setCharacteristicNotification(bluetoothGatt, arrayNtfCharList.get(0), true))
+        if (arrayNtfCharList.size()>0 && !setCharacteristicNotification(bluetoothGatt, arrayNtfCharList.get(0), true))
             return false;
         notifyCharaIndex++;
 
@@ -398,8 +434,8 @@ public class BLEDeviceManager {
 
             @Override
             public void run() {
-                if (sOnRecievedDataListener!=null){
-                    sOnRecievedDataListener.onRecivedData(commands);
+                if (sOnReceivedDataListener != null) {
+                    sOnReceivedDataListener.onRecivedData(commands);
                 }
                 switch (commands[0]) {
                     case CommandProtocol.Type.FEEDBACK_CONTROL: {
@@ -428,6 +464,15 @@ public class BLEDeviceManager {
         mBluetoothGatt = null;
     }
 
+    /**
+     * <p>
+     * Result device for scanning once.
+     * </p>
+     *
+     * @reset The variable must be reset at the proper time!
+     * @since 1.0.0
+     */
+    private List<BluetoothDevice> mBluetoothDevicesFound = new ArrayList<BluetoothDevice>();
     private boolean mScanning;
     private Handler mHandler = new Handler();
     // Stops scanning after 10 seconds.
@@ -438,36 +483,71 @@ public class BLEDeviceManager {
             @Override
             public void run() {
                 mScanning = false;
-                if (sOnDiscoveryBLEListener != null)
+                if (sOnDiscoveryBLEListener != null) {
+
                     sOnDiscoveryBLEListener.onDiscoveryFinished();
+                }
                 BluetoothDeviceManager.getBluetoothAdapter().stopLeScan(mLeScanCallback);
             }
         }, CommandProtocol.SCAN_TIMEOUT);
         if (sOnDiscoveryBLEListener != null)
             sOnDiscoveryBLEListener.onDiscoveryStarted();
+        if (mBluetoothDevicesFound != null) {
+            mBluetoothDevicesFound.clear();
+        }
         mScanning = true;
         BluetoothDeviceManager.getBluetoothAdapter().startLeScan(mLeScanCallback);
     }
 
     public void stopScan() {
-        if (mScanning)
+        if (mScanning) {
+            if (mBluetoothDevicesFound != null) {
+                mBluetoothDevicesFound.clear();
+            }
             BluetoothDeviceManager.getBluetoothAdapter().stopLeScan(mLeScanCallback);
+        }
     }
 
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-            if (sOnDiscoveryBLEListener != null)
-                sOnDiscoveryBLEListener.onBluetoothDeviceBluetoothScanBLEReceived(device,rssi,scanRecord);
+
+            if (sOnDiscoveryBLEListener != null) {
+                if (filterRepeatDevice(device))
+                    sOnDiscoveryBLEListener.onBluetoothDeviceBluetoothScanBLEReceived(device, rssi, scanRecord);
+            }
         }
     };
 
+
+    private boolean filterRepeatDevice(BluetoothDevice device) {
+        for (BluetoothDevice bluetoothDevice : mBluetoothDevicesFound) {
+            if (bluetoothDevice.getAddress().equalsIgnoreCase(device.getAddress())) {
+
+                return false;
+            }
+        }
+        mBluetoothDevicesFound.add(device);
+        return true;
+    }
+
     /**
      * send commands to device for test
+     *
      * @param testByte
      */
     public void sendDebugData(byte[] testByte) {
-        sendData(mBluetoothGatt,testByte);
+        sendData(mBluetoothGatt, testByte);
     }
+
+    /**
+     * send commands to device for test
+     *
+     * @param testStrings
+     */
+    public void sendDebugData(String testStrings) {
+        sendData(mBluetoothGatt, testStrings);
+    }
+
 
 }

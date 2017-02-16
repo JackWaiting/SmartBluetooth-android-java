@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <RelativeLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp">
+        <TextView
+            android:id="@+id/tv_service_uuid_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/service_uuid"
+            android:textSize="14sp"
+            android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/tv_service_uuid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_toRightOf="@+id/tv_service_uuid_tip"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/top1"
+        android:layout_below="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+        <TextView
+            android:id="@+id/tv_characteristic_uuid_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/characteristic_uuid"
+            android:textSize="14sp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:paddingLeft="15dp"
+            android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/tv_characteristic_uuid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:paddingRight="15dp"
+            android:textColor="@color/black"
+            android:layout_toRightOf="@+id/tv_characteristic_uuid_tip"/>
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/top2"
+        android:layout_below="@+id/top1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp">
+        <TextView
+            android:id="@+id/btn_send"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:button = "@null"
+            android:background="@null"
+            android:text="Send"
+            android:textColor="@color/black"
+            android:gravity="right"
+            />
+        <TextView
+            android:id="@+id/tv_write_data_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/data_write"
+            android:textSize="14sp"
+            android:textColor="@color/black"/>
+
+        <EditText
+            android:id="@+id/edi_write_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:button = "@null"
+            android:hint="Send data to device"
+            android:background="@null"
+            android:layout_marginLeft="5dp"
+            android:textSize="14sp"
+            android:layout_marginRight="50dp"
+            android:textColor="@color/black"
+            android:layout_toRightOf="@+id/tv_write_data_tip"/>
+
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/top3"
+        android:layout_below="@+id/top2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+        <TextView
+            android:id="@+id/tv_received_data_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/data_received"
+            android:textSize="14sp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:paddingLeft="15dp"
+            android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/tv_received_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:layout_marginLeft="5dp"
+            android:paddingRight="15dp"
+            android:textColor="@color/black"
+            android:layout_toRightOf="@+id/tv_received_data_tip"/>
+
+    </RelativeLayout>
+</RelativeLayout>

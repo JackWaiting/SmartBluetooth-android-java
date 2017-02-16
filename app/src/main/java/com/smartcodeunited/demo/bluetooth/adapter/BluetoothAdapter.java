@@ -51,7 +51,6 @@ public class BluetoothAdapter extends BaseAdapter {
 
 	@Override
 	public long getItemId(int position) {
-
 		return position;
 	}
 
