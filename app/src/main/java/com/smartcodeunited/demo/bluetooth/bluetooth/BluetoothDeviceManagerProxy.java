@@ -188,7 +188,6 @@ public class BluetoothDeviceManagerProxy  {
         bluzDeviceMan = getBluetoothDeviceManager();
         Log.i("connectDevice", "connectDevice+else");
         stopScanning();
-        disconnected();
         bluzDeviceMan.connect(device);
         return false;
     }

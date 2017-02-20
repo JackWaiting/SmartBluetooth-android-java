@@ -56,12 +56,19 @@ public class MainActivity extends BluetoothActivity implements View.OnClickListe
     @Override
     public void connectCallback(BluetoothGatt mBluetoothGatt, int state) {
         if(mBluetoothGatt != null){
-           if(state == 2){
-                Intent intent = new Intent(this,DeviceUUIDActivity.class);
-                intent.putExtra("mBluetoothGattName",mBluetoothGatt.getDevice().getName());
-                intent.putExtra("strUUIDService",strUUIDService);
-                intent.putExtra("strUUIDCharacteristic",strUUIDCharacteristic);
-                startActivity(intent);
+           if(state == 2 ){
+               if((!"".equals(strUUIDService) && strUUIDService != null)){
+                   Log.i("DeviceUUIDActivity","strUUIDService=" + strUUIDService + "strUUIDCharacteristic=" + strUUIDCharacteristic);
+                   Intent intent = new Intent(this,DeviceUUIDActivity.class);
+                   intent.putExtra("mBluetoothGattName",mBluetoothGatt.getDevice().getName());
+                   intent.putExtra("strUUIDService",strUUIDService);
+                   intent.putExtra("strUUIDCharacteristic",strUUIDCharacteristic);
+                   startActivity(intent);
+               }else{
+                   if(proxy != null){
+                       proxy.disconnected();
+                   }
+               }
             }
         }
     }
