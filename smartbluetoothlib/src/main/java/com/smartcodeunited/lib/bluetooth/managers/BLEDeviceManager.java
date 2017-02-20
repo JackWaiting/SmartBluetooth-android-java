@@ -29,7 +29,6 @@ import android.util.Log;
 
 import com.smartcodeunited.lib.bluetooth.commands.CommandManager;
 import com.smartcodeunited.lib.bluetooth.commands.CommandProtocol;
-import com.smartcodeunited.lib.bluetooth.tools.LogManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,9 +44,9 @@ public class BLEDeviceManager {
     // / send data
     private static BluetoothGattCharacteristic writeCharacteristic; // / write
     // Characteristic；uuid for test.
-    private static String uuidQppService = "0000fee9-0000-1000-8000-00805f9b34fb";
+    private static String uuidQppService = "0000ffe1-0000-1000-8000-00805f9b34fb";
     // Characteristic；uuid for test.
-    private static String uuidQppCharWrite = "d44bc439-abfd-45a2-b575-925416129600";
+    private static String uuidQppCharWrite = "0000ffe2-0000-1000-8000-00805f9b34fb";
     public static final int qppServerBufferSize = 20;
     // / receive data
     private static BluetoothGattCharacteristic notifyCharacteristic;
@@ -210,6 +209,7 @@ public class BLEDeviceManager {
 //                    }
                 }
             }
+//            setEnable(gatt,uuidQppService,uuidQppCharWrite);
 
 
         }
@@ -229,7 +229,7 @@ public class BLEDeviceManager {
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
 //            Log.e(TAG, status==BluetoothGatt.GATT_SUCCESS?"Send success!!":"Send failed!!");
-            Log.d(TAG, status + "--" + Arrays.toString(characteristic.getValue()));
+            Log.e(TAG, status + "--" + Arrays.toString(characteristic.getValue()));
 
         }
 
@@ -242,6 +242,7 @@ public class BLEDeviceManager {
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
             updateValueForNotification(gatt, characteristic);
+            Log.e(TAG, "!!!!");
         }
 
         @Override
@@ -284,16 +285,15 @@ public class BLEDeviceManager {
         for (int j = 0; j < gattCharacteristics.size(); j++) {
             BluetoothGattCharacteristic chara = gattCharacteristics.get(j);
             if (chara.getUuid().toString().equals(uuidQppCharWrite)) {
-                // Log.i(TAG,"Wr char is "+chara.getUuid().toString());
+                Log.i(TAG, "Wr char is " + chara.getUuid().toString());
                 writeCharacteristic = chara;
             } else if (chara.getProperties() == BluetoothGattCharacteristic.PROPERTY_NOTIFY) {
-                // Log.i(TAG,"NotiChar UUID is : "+chara.getUuid().toString());
+                Log.i(TAG, "NotiChar UUID is : " + chara.getUuid().toString());
                 notifyCharacteristic = chara;
                 arrayNtfCharList.add(chara);
             }
         }
-
-        if (arrayNtfCharList.size()>0&&!setCharacteristicNotification(bluetoothGatt, arrayNtfCharList.get(0), true))
+        if (arrayNtfCharList.size() == 0 || !setCharacteristicNotification(bluetoothGatt, arrayNtfCharList.get(0), true))
             return false;
         notifyCharaIndex++;
 
@@ -311,6 +311,7 @@ public class BLEDeviceManager {
 
     private boolean setLENextNotify(BluetoothGatt bluetoothGatt,
                                     boolean EnableNotifyChara) {
+        Log.e(TAG, "setLENextNotify");
         if (notifyCharaIndex == arrayNtfCharList.size()) {
             NotifyEnabled = true;
             return true;
@@ -328,6 +329,19 @@ public class BLEDeviceManager {
         }
 
         bluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+
+        //-----Descriptors info-----//
+       /* List<BluetoothGattDescriptor> gattDescriptors = characteristic.getDescriptors();
+        for (BluetoothGattDescriptor gattDescriptor : gattDescriptors) {
+            Log.e(TAG, "-------->desc uuid:" + gattDescriptor.getUuid());
+            int descPermission = gattDescriptor.getPermissions();
+//            Log.e(TAG,"-------->desc permission:"+ Utils.getDescPermission(descPermission));
+
+            byte[] desData = gattDescriptor.getValue();
+            if (desData != null && desData.length > 0) {
+                Log.e(TAG, "-------->desc value:" + new String(desData));
+            }
+        }*/
 
         try {
             BluetoothGattDescriptor descriptor = characteristic
@@ -361,6 +375,8 @@ public class BLEDeviceManager {
             Log.e(TAG, "invalid arguments");
             return;
         }
+        Log.e(TAG, "notifyCharaIndex-->" + notifyCharaIndex + ",size-->" + arrayNtfCharList.size());
+
         if (!NotifyEnabled) {
             Log.e(TAG, "The notifyCharacteristic not enabled");
             return;
@@ -371,7 +387,8 @@ public class BLEDeviceManager {
         // if (qppData != null && qppData.length > 0)
         // OnVoltageListener.onQppReceiveData(bluetoothGatt, strUUIDForNotifyChar,
         // qppData);
-        LogManager.d(TAG, "receive-->" + receiveData);
+        Log.d(TAG, "receive-->" + Arrays.toString(receiveData));
+
 //        printLog(receiveData);
         if (CommandManager.isCommandValid(receiveData)) {
             parse(receiveData);
@@ -399,6 +416,7 @@ public class BLEDeviceManager {
             return false;
         }
         writeCharacteristic.setValue(qppData);
+        writeCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
         return bluetoothGatt.writeCharacteristic(writeCharacteristic);
     }
 
@@ -422,6 +440,7 @@ public class BLEDeviceManager {
             return false;
         }
         writeCharacteristic.setValue(bytes);
+        writeCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
         return bluetoothGatt.writeCharacteristic(writeCharacteristic);
     }
 
