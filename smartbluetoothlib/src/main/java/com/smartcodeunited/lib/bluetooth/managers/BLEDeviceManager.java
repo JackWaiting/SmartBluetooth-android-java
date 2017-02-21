@@ -546,6 +546,7 @@ public class BLEDeviceManager {
      * @param testStrings
      */
     public void sendDebugData(String testStrings) {
+        Log.i("BLEDeviceManager","uuidQppCharWrite" + uuidQppCharWrite);
         sendData(mBluetoothGatt, testStrings);
     }
 

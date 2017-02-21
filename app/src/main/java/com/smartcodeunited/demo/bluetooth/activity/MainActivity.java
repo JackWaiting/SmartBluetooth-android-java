@@ -79,6 +79,7 @@ public class MainActivity extends BluetoothActivity implements View.OnClickListe
             Log.i("DeviceUUIDActivity","ServiceUUID=" + UUIDService + "gattCharacteristic=" + gattCharacteristic.getUuid());
             strUUIDService = UUIDService;
             strUUIDCharacteristic = gattCharacteristic.getUuid() +"";
+
         }
     };
 

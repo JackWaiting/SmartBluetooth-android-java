@@ -83,9 +83,12 @@ public class DeviceUUIDActivity extends BaseActivity implements View.OnClickList
     private BLEDeviceManager.OnReceivedDataListener onReceivedDataListenerer = new BLEDeviceManager.OnReceivedDataListener() {
         @Override
         public void onRecivedData(byte[] data) {
+            String strData = "";
             for (int i = 0; i < data.length; i ++){
                 Log.i("onRecivedData","data = " + data[i]);
+                strData += data[i] +" ";
             }
+            tvReceivedData.setText(strData);
         }
     };
 
